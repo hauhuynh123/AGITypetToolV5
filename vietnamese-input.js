@@ -319,16 +319,21 @@ class VietnameseInput {
     }
 
     /**
-     * Handle enter key
+     * Handle enter key - Delete all characters sequentially
      */
     handleEnter() {
         this.commitPendingChar();
-        const wrapper = document.getElementById("wrapper");
-        if (wrapper) {
-            wrapper.innerHTML = "";
+        if (window.deleteAllCharacters) {
+            window.deleteAllCharacters();
+        } else {
+            // Fallback to instant clear if function not available
+            const wrapper = document.getElementById("wrapper");
+            if (wrapper) {
+                wrapper.innerHTML = "";
+            }
+            window.setTheme?.();
+            window.currentWord = null;
         }
-        window.setTheme?.();
-        window.currentWord = null;
     }
 
     /**

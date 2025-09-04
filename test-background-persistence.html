@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Background Color Persistence</title>
+    <link rel="stylesheet" href="tweakpane-style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .test-instructions {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .test-result {
+            background: #1a3a1a;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .test-result.error {
+            background: #3a1a1a;
+        }
+
+        .test-result.success {
+            background: #1a3a1a;
+        }
+
+        .typing-area {
+            min-height: 100px;
+            border: 2px dashed #555;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .word {
+            display: flex;
+            margin: 5px 0;
+        }
+
+        .letter {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            margin: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Test Background Color Persistence</h1>
+
+        <div class="test-section">
+            <div class="test-title">🎯 Test: Background Color Persistence on Enter</div>
+            <div class="test-instructions">
+                <strong>Instructions:</strong><br>
+                1. Select a background color from the dropdown below<br>
+                2. Type some text in the typing area<br>
+                3. Press <strong>Enter</strong> to reset the canvas<br>
+                4. Verify that the background color remains the same
+            </div>
+
+            <div class="tp-pane">
+                <div class="tp-root">
+                    <div class="tp-folder tp-folder-expanded">
+                        <div class="tp-folder-header">
+                            <div class="tp-folder-title">Background Color Test</div>
+                        </div>
+                        <div class="tp-folder-content">
+                            <div class="tp-section">
+                                <div class="tp-section-header">
+                                    <div class="tp-section-title">Background Color</div>
+                                </div>
+                                <div class="tp-section-content">
+                                    <div class="tp-control-item">
+                                        <div class="tp-label">Select Background Color</div>
+                                        <select id="background-color-select" class="tp-select">
+                                            <option value="#FFFFFF">White</option>
+                                            <option value="#FF0000">Red</option>
+                                            <option value="#0000FF">Blue</option>
+                                            <option value="#FFFF00">Yellow</option>
+                                        </select>
+                                        <div class="tp-hint">This color should persist when you press Enter</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-result" id="test-result">
+                <strong>Test Status:</strong> Ready to test<br>
+                <strong>Current Background:</strong> <span id="current-bg">#1a1a1a</span><br>
+                <strong>Selected Color:</strong> <span id="selected-color">None</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">⌨️ Typing Area</div>
+            <div class="typing-area" id="typing-area">
+                <div class="word" id="current-word"></div>
+            </div>
+            <div class="tp-hint">Type some text here, then press Enter to test background persistence</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📊 Test Results</div>
+            <div id="test-log">
+                <div class="test-result">
+                    <strong>Test Log:</strong><br>
+                    <div id="log-content">No tests run yet...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate the setTheme function from the main app
+        function setTheme() {
+            // Check if background color is already set by user selection
+            const currentBgColor = document.body.style.backgroundColor;
+            const backgroundSelect = document.getElementById('background-color-select');
+
+            // Only set random background if no background is currently set
+            if (!currentBgColor || currentBgColor === '' || currentBgColor === 'rgba(0, 0, 0, 0)') {
+                var backgrounds = ["#FF0000", "#FFFF00", "#0000FF"]; // red, yellow, blue
+                var background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+                document.body.style.backgroundColor = background;
+
+                // Update the select dropdown to match the random color
+                if (backgroundSelect) {
+                    backgroundSelect.value = background;
+                }
+            } else {
+                // Keep the current background color (user selected)
+                // Just ensure the select dropdown matches
+                if (backgroundSelect && currentBgColor) {
+                    // Convert rgb() to hex for comparison
+                    const rgbToHex = (rgb) => {
+                        const result = rgb.match(/\d+/g);
+                        if (result) {
+                            const r = parseInt(result[0]);
+                            const g = parseInt(result[1]);
+                            const b = parseInt(result[2]);
+                            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+                        }
+                        return rgb;
+                    };
+
+                    const hexColor = rgbToHex(currentBgColor);
+                    if (backgroundSelect.querySelector(`option[value="${hexColor}"]`)) {
+                        backgroundSelect.value = hexColor;
+                    }
+                }
+            }
+
+            // Always set foreground color (this doesn't interfere with background)
+            var foregrounds = ["#000000", "#FFFFFF"]; // black, white
+            var foreground = foregrounds[Math.floor(Math.random() * foregrounds.length)];
+            document.documentElement.style.setProperty('--foreground', foreground);
+        }
+
+        // Background color change listener
+        document.getElementById('background-color-select').addEventListener('change', function (e) {
+            const newColor = e.target.value;
+            document.body.style.backgroundColor = newColor;
+
+            // Update display
+            document.getElementById('current-bg').textContent = newColor;
+            document.getElementById('selected-color').textContent = newColor;
+
+            // Log the change
+            logTest(`Background color changed to: ${newColor}`);
+        });
+
+        // Simulate typing and Enter key behavior
+        let currentWord = document.getElementById('current-word');
+        let testCount = 0;
+
+        document.addEventListener('keydown', function (event) {
+            // Handle Enter key (reset canvas)
+            if (event.keyCode === 13) {
+                testCount++;
+                const beforeBg = document.body.style.backgroundColor;
+
+                // Clear typing area
+                document.getElementById('typing-area').innerHTML = '<div class="word" id="current-word"></div>';
+                currentWord = document.getElementById('current-word');
+
+                // Call setTheme (this should preserve background color)
+                setTheme();
+
+                const afterBg = document.body.style.backgroundColor;
+
+                // Test if background color was preserved
+                if (beforeBg === afterBg) {
+                    logTest(`✅ Test ${testCount}: Background color preserved (${afterBg})`, 'success');
+                } else {
+                    logTest(`❌ Test ${testCount}: Background color changed from ${beforeBg} to ${afterBg}`, 'error');
+                }
+
+                event.preventDefault();
+                return;
+            }
+
+            // Handle regular typing (add letters to current word)
+            if (event.keyCode >= 65 && event.keyCode <= 90) { // A-Z
+                const letter = document.createElement('div');
+                letter.className = 'letter';
+                letter.textContent = String.fromCharCode(event.keyCode);
+                currentWord.appendChild(letter);
+                event.preventDefault();
+            }
+
+            // Handle space (create new word)
+            if (event.keyCode === 32) {
+                const newWord = document.createElement('div');
+                newWord.className = 'word';
+                document.getElementById('typing-area').appendChild(newWord);
+                currentWord = newWord;
+                event.preventDefault();
+            }
+        });
+
+        function logTest(message, type = '') {
+            const logContent = document.getElementById('log-content');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `test-result ${type}`;
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        // Initialize
+        setTheme();
+        logTest('Test initialized. Select a background color and start typing!');
+    </script>
+</body>
+
+</html>

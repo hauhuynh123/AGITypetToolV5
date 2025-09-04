@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sequential Delete</title>
+    <link rel="stylesheet" href="tweakpane-style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .test-instructions {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .typing-area {
+            min-height: 200px;
+            border: 2px dashed #555;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .word {
+            display: flex;
+            margin: 5px 0;
+            align-items: center;
+        }
+
+        .letter {
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            margin: 0 3px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #45a049;
+        }
+
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .btn.danger {
+            background: #f44336;
+        }
+
+        .btn.danger:hover {
+            background: #da190b;
+        }
+
+        .info-panel {
+            background: #1a3a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .info-panel h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+
+        .info-panel ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .info-panel li {
+            margin: 5px 0;
+        }
+
+        .status {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .status.deleting {
+            background: #3a2a1a;
+            color: #ff9800;
+        }
+
+        .status.completed {
+            background: #1a3a1a;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Test Sequential Delete (Enter Key)</h1>
+
+        <div class="test-section">
+            <div class="test-title">⌨️ Sequential Delete Demo</div>
+            <div class="test-instructions">
+                <strong>Instructions:</strong><br>
+                1. Type some text in the typing area below<br>
+                2. Press <strong>Enter</strong> to trigger sequential deletion<br>
+                3. Watch as characters are deleted one by one (like pressing Delete repeatedly)<br>
+                4. Use the demo buttons to test different scenarios
+            </div>
+
+            <div class="controls">
+                <button class="btn" onclick="addDemoText()">Add Demo Text</button>
+                <button class="btn" onclick="addRandomWords()">Add Random Words</button>
+                <button class="btn" onclick="addLongText()">Add Long Text</button>
+                <button class="btn" onclick="clearAll()">Clear All</button>
+                <button class="btn danger" onclick="triggerSequentialDelete()">Trigger Sequential Delete</button>
+            </div>
+
+            <div class="typing-area" id="typing-area">
+                <div class="word" id="current-word"></div>
+            </div>
+
+            <div class="status" id="status">
+                <strong>Status:</strong> Ready to test<br>
+                <strong>Characters:</strong> <span id="char-count">0</span><br>
+                <strong>Words:</strong> <span id="word-count">0</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📊 Sequential Delete Details</div>
+            <div class="info-panel">
+                <h4>How it works:</h4>
+                <ul>
+                    <li><strong>Enter Key:</strong> Triggers sequential deletion instead of instant clear</li>
+                    <li><strong>Deletion Speed:</strong> 50ms delay between each character deletion</li>
+                    <li><strong>Deletion Order:</strong> From right to left, word by word</li>
+                    <li><strong>Word Handling:</strong> When word is empty, moves to previous word</li>
+                    <li><strong>Final State:</strong> Creates empty word container when done</li>
+                    <li><strong>Background:</strong> Preserves user-selected background color</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎯 Test Scenarios</div>
+            <div class="controls">
+                <button class="btn" onclick="testSingleWord()">Test Single Word</button>
+                <button class="btn" onclick="testMultipleWords()">Test Multiple Words</button>
+                <button class="btn" onclick="testMixedContent()">Test Mixed Content</button>
+                <button class="btn" onclick="testEmptyCanvas()">Test Empty Canvas</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentWord = document.getElementById('current-word');
+        let wordCount = 0;
+        let isDeleting = false;
+
+        // Simulate the setTheme function
+        function setTheme() {
+            console.log('setTheme called - background preserved');
+        }
+
+        // Function to delete all characters sequentially
+        function deleteAllCharacters() {
+            const wrapper = document.getElementById("typing-area");
+            const words = wrapper.querySelectorAll('.word');
+
+            if (words.length === 0) {
+                return; // Nothing to delete
+            }
+
+            // Calculate total characters to delete
+            let totalChars = 0;
+            words.forEach(word => {
+                totalChars += word.childNodes.length;
+            });
+
+            if (totalChars === 0) {
+                return; // No characters to delete
+            }
+
+            isDeleting = true;
+            updateStatus('deleting', `Deleting ${totalChars} characters...`);
+
+            // Delete characters one by one with delay
+            let deletedCount = 0;
+            const deleteInterval = setInterval(() => {
+                if (currentWord && currentWord.lastChild) {
+                    // Delete last character in current word
+                    currentWord.removeChild(currentWord.lastChild);
+
+                    // If word is empty, remove it and move to previous word
+                    if (currentWord.childNodes.length === 0) {
+                        currentWord.parentNode.removeChild(currentWord);
+                        const remainingWords = document.querySelectorAll('#typing-area .word');
+                        currentWord = remainingWords[remainingWords.length - 1] || null;
+                    }
+
+                    deletedCount++;
+                    updateStatus('deleting', `Deleting... ${deletedCount}/${totalChars} characters`);
+
+                    // Stop when all characters are deleted
+                    if (deletedCount >= totalChars) {
+                        clearInterval(deleteInterval);
+                        // Ensure we have at least one empty word container
+                        if (!currentWord) {
+                            currentWord = createWordContainer();
+                        }
+                        setTheme();
+                        isDeleting = false;
+                        updateStatus('completed', 'Deletion completed!');
+                        updateCounts();
+                    }
+                } else {
+                    // No more characters to delete
+                    clearInterval(deleteInterval);
+                    if (!currentWord) {
+                        currentWord = createWordContainer();
+                    }
+                    setTheme();
+                    isDeleting = false;
+                    updateStatus('completed', 'Deletion completed!');
+                    updateCounts();
+                }
+            }, 50); // 50ms delay between deletions for visual effect
+        }
+
+        // Make function available globally
+        window.deleteAllCharacters = deleteAllCharacters;
+
+        // Create word container
+        function createWordContainer() {
+            const word = document.createElement('div');
+            word.className = 'word';
+            document.getElementById('typing-area').appendChild(word);
+            return word;
+        }
+
+        // Add demo text
+        function addDemoText() {
+            const words = ['Hello', 'World', 'This', 'is', 'a', 'test'];
+            words.forEach((word, index) => {
+                setTimeout(() => {
+                    addWord(word);
+                }, index * 100);
+            });
+        }
+
+        // Add random words
+        function addRandomWords() {
+            const randomWords = ['Type', 'Some', 'Text', 'Here', 'And', 'Press', 'Enter'];
+            const randomWord = randomWords[Math.floor(Math.random() * randomWords.length)];
+            addWord(randomWord);
+        }
+
+        // Add long text
+        function addLongText() {
+            const longText = 'This is a very long sentence with many characters to test the sequential deletion functionality properly';
+            const words = longText.split(' ');
+            words.forEach((word, index) => {
+                setTimeout(() => {
+                    addWord(word);
+                }, index * 50);
+            });
+        }
+
+        // Add a word to the typing area
+        function addWord(text) {
+            const word = document.createElement('div');
+            word.className = 'word';
+
+            for (let i = 0; i < text.length; i++) {
+                const letter = document.createElement('div');
+                letter.className = 'letter';
+                letter.textContent = text[i];
+                word.appendChild(letter);
+            }
+
+            document.getElementById('typing-area').appendChild(word);
+            wordCount++;
+            updateCounts();
+        }
+
+        // Clear all content
+        function clearAll() {
+            document.getElementById('typing-area').innerHTML = '<div class="word" id="current-word"></div>';
+            currentWord = document.getElementById('current-word');
+            wordCount = 0;
+            updateCounts();
+            updateStatus('', 'Canvas cleared');
+        }
+
+        // Trigger sequential delete
+        function triggerSequentialDelete() {
+            if (isDeleting) {
+                updateStatus('', 'Already deleting, please wait...');
+                return;
+            }
+            deleteAllCharacters();
+        }
+
+        // Update status
+        function updateStatus(type, message) {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.innerHTML = `<strong>Status:</strong> ${message}<br><strong>Characters:</strong> <span id="char-count">${getCharCount()}</span><br><strong>Words:</strong> <span id="word-count">${getWordCount()}</span>`;
+        }
+
+        // Update counts
+        function updateCounts() {
+            document.getElementById('char-count').textContent = getCharCount();
+            document.getElementById('word-count').textContent = getWordCount();
+        }
+
+        // Get character count
+        function getCharCount() {
+            const words = document.querySelectorAll('#typing-area .word');
+            let count = 0;
+            words.forEach(word => {
+                count += word.childNodes.length;
+            });
+            return count;
+        }
+
+        // Get word count
+        function getWordCount() {
+            return document.querySelectorAll('#typing-area .word').length;
+        }
+
+        // Test scenarios
+        function testSingleWord() {
+            clearAll();
+            setTimeout(() => addWord('Hello'), 100);
+        }
+
+        function testMultipleWords() {
+            clearAll();
+            setTimeout(() => {
+                addWord('Multiple');
+                setTimeout(() => addWord('Words'), 200);
+                setTimeout(() => addWord('Test'), 400);
+            }, 100);
+        }
+
+        function testMixedContent() {
+            clearAll();
+            setTimeout(() => {
+                addWord('Mixed123');
+                setTimeout(() => addWord('Content!@#'), 200);
+                setTimeout(() => addWord('Test'), 400);
+            }, 100);
+        }
+
+        function testEmptyCanvas() {
+            clearAll();
+            setTimeout(() => {
+                updateStatus('', 'Testing empty canvas - should do nothing');
+            }, 100);
+        }
+
+        // Handle keyboard input
+        document.addEventListener('keydown', function (event) {
+            // Handle Enter key (sequential delete)
+            if (event.keyCode === 13) {
+                triggerSequentialDelete();
+                event.preventDefault();
+                return;
+            }
+
+            // Handle regular typing (add letters to current word)
+            if (event.keyCode >= 65 && event.keyCode <= 90) { // A-Z
+                const letter = document.createElement('div');
+                letter.className = 'letter';
+                letter.textContent = String.fromCharCode(event.keyCode);
+                currentWord.appendChild(letter);
+                updateCounts();
+                event.preventDefault();
+            }
+
+            // Handle space (create new word)
+            if (event.keyCode === 32) {
+                const newWord = document.createElement('div');
+                newWord.className = 'word';
+                document.getElementById('typing-area').appendChild(newWord);
+                currentWord = newWord;
+                wordCount++;
+                updateCounts();
+                event.preventDefault();
+            }
+        });
+
+        // Initialize
+        updateCounts();
+        console.log('Sequential Delete Test initialized');
+        console.log('Type some text and press Enter to see sequential deletion!');
+    </script>
+</body>
+
+</html>

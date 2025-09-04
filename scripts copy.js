@@ -1,16 +1,108 @@
 // COLOR
 function setTheme() {
-  var backgrounds = ["#FF0000", "#FFFF00", "#0000FF"]; // red, yellow, blue
+  // Check if background color is already set by user selection
+  const currentBgColor = document.body.style.backgroundColor;
+  const backgroundSelect = document.getElementById('background-color-select');
+
+  // Only set random background if no background is currently set
+  if (!currentBgColor || currentBgColor === '' || currentBgColor === 'rgba(0, 0, 0, 0)') {
+    var backgrounds = ["#FF0000", "#FFFF00", "#0000FF"]; // red, yellow, blue
+    var background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    document.body.style.backgroundColor = background;
+
+    // Update the select dropdown to match the random color
+    if (backgroundSelect) {
+      backgroundSelect.value = background;
+    }
+  } else {
+    // Keep the current background color (user selected)
+    // Just ensure the select dropdown matches
+    if (backgroundSelect && currentBgColor) {
+      // Convert rgb() to hex for comparison
+      const rgbToHex = (rgb) => {
+        const result = rgb.match(/\d+/g);
+        if (result) {
+          const r = parseInt(result[0]);
+          const g = parseInt(result[1]);
+          const b = parseInt(result[2]);
+          return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+        return rgb;
+      };
+
+      const hexColor = rgbToHex(currentBgColor);
+      if (backgroundSelect.querySelector(`option[value="${hexColor}"]`)) {
+        backgroundSelect.value = hexColor;
+      }
+    }
+  }
+
+  // Always set foreground color (this doesn't interfere with background)
   var foregrounds = ["#000000", "#FFFFFF"]; // black, white
-
-  var background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
   var foreground = foregrounds[Math.floor(Math.random() * foregrounds.length)];
-
-  document.body.style.backgroundColor = background;
   document.documentElement.style.setProperty('--foreground', foreground);
 }
 
 let currentWord = null;
+
+// Function to delete all characters sequentially
+function deleteAllCharacters() {
+  const wrapper = document.getElementById("wrapper");
+  const words = wrapper.querySelectorAll('.word');
+
+  if (words.length === 0) {
+    return; // Nothing to delete
+  }
+
+  // Calculate total characters to delete
+  let totalChars = 0;
+  words.forEach(word => {
+    totalChars += word.childNodes.length;
+  });
+
+  if (totalChars === 0) {
+    return; // No characters to delete
+  }
+
+  // Delete characters one by one with delay
+  let deletedCount = 0;
+  const deleteInterval = setInterval(() => {
+    if (currentWord && currentWord.lastChild) {
+      // Delete last character in current word
+      currentWord.removeChild(currentWord.lastChild);
+      updateWordFlex(currentWord);
+
+      // If word is empty, remove it and move to previous word
+      if (currentWord.childNodes.length === 0) {
+        currentWord.parentNode.removeChild(currentWord);
+        const remainingWords = document.querySelectorAll('#wrapper .word');
+        currentWord = remainingWords[remainingWords.length - 1] || null;
+      }
+
+      deletedCount++;
+
+      // Stop when all characters are deleted
+      if (deletedCount >= totalChars) {
+        clearInterval(deleteInterval);
+        // Ensure we have at least one empty word container
+        if (!currentWord) {
+          currentWord = createWordContainer();
+        }
+        setTheme();
+      }
+    } else {
+      // No more characters to delete
+      clearInterval(deleteInterval);
+      if (!currentWord) {
+        currentWord = createWordContainer();
+      }
+      setTheme();
+    }
+  }, 50); // 50ms delay between deletions for visual effect
+}
+
+// Make function available globally for Vietnamese input
+window.deleteAllCharacters = deleteAllCharacters;
 
 // Initialize with first word container when DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
@@ -228,11 +320,9 @@ window.addEventListener("keydown", event => {
     }
     return;
   }
-  // ENTER
+  // ENTER - Delete all characters sequentially like pressing Delete multiple times
   if (event.keyCode == 13) {
-    document.getElementById("wrapper").innerHTML = "";
-    setTheme();
-    currentWord = null;
+    deleteAllCharacters();
     return;
   }
 });
