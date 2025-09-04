@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Background White & Button Layout</title>
+    <link rel="stylesheet" href="tweakpane-style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .test-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+        }
+
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Test Background White & Button Layout</h1>
+
+        <div class="test-section">
+            <div class="test-title">1. Background Color Test</div>
+            <div class="tp-pane">
+                <div class="tp-root">
+                    <div class="tp-folder tp-folder-expanded">
+                        <div class="tp-folder-header">
+                            <div class="tp-folder-title">Canvas Settings</div>
+                        </div>
+                        <div class="tp-folder-content">
+                            <div class="tp-section">
+                                <div class="tp-section-header">
+                                    <div class="tp-section-title">Background Color</div>
+                                </div>
+                                <div class="tp-section-content">
+                                    <div class="tp-control-item">
+                                        <div class="tp-label">Background Color</div>
+                                        <select id="background-color-select" class="tp-select">
+                                            <option value="#FFFFFF">White</option>
+                                            <option value="#FF0000">Red</option>
+                                            <option value="#0000FF">Blue</option>
+                                            <option value="#FFFF00">Yellow</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">2. Button Layout Test - Same Row</div>
+            <div class="tp-pane">
+                <div class="tp-root">
+                    <div class="tp-folder tp-folder-expanded">
+                        <div class="tp-folder-header">
+                            <div class="tp-folder-title">Export Options</div>
+                        </div>
+                        <div class="tp-folder-content">
+                            <div class="tp-section">
+                                <div class="tp-section-header">
+                                    <div class="tp-section-title">Export Buttons</div>
+                                </div>
+                                <div class="tp-section-content">
+                                    <div class="tp-button-group">
+                                        <button class="tp-button tp-button-primary">
+                                            <div class="tp-button-title">Export SVG</div>
+                                        </button>
+                                        <button class="tp-button tp-button-primary">
+                                            <div class="tp-button-title">Export PNG</div>
+                                        </button>
+                                        <button class="tp-button tp-button-secondary">
+                                            <div class="tp-button-title">Debug Layout</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">3. Canvas Size Buttons - Same Row</div>
+            <div class="tp-pane">
+                <div class="tp-root">
+                    <div class="tp-folder tp-folder-expanded">
+                        <div class="tp-folder-header">
+                            <div class="tp-folder-title">Canvas Settings</div>
+                        </div>
+                        <div class="tp-folder-content">
+                            <div class="tp-section">
+                                <div class="tp-section-header">
+                                    <div class="tp-section-title">Canvas Size</div>
+                                </div>
+                                <div class="tp-section-content">
+                                    <div class="tp-control-item">
+                                        <div class="tp-label">Canvas Size</div>
+                                        <div class="tp-input-group">
+                                            <div class="tp-number-input-group">
+                                                <label class="tp-number-label">Width:</label>
+                                                <input type="number" class="tp-number-input" min="200" max="4000"
+                                                    value="1200" step="50">
+                                            </div>
+                                            <div class="tp-number-input-group">
+                                                <label class="tp-number-label">Height:</label>
+                                                <input type="number" class="tp-number-input" min="200" max="4000"
+                                                    value="800" step="50">
+                                            </div>
+                                        </div>
+                                        <div class="tp-button-group">
+                                            <button class="tp-button tp-button-primary">
+                                                <div class="tp-button-title">Apply Size</div>
+                                            </button>
+                                            <button class="tp-button tp-button-secondary">
+                                                <div class="tp-button-title">Fullscreen</div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">4. Background Image Buttons - Same Row</div>
+            <div class="tp-pane">
+                <div class="tp-root">
+                    <div class="tp-folder tp-folder-expanded">
+                        <div class="tp-folder-header">
+                            <div class="tp-folder-title">Background Image</div>
+                        </div>
+                        <div class="tp-folder-content">
+                            <div class="tp-section">
+                                <div class="tp-section-header">
+                                    <div class="tp-section-title">Background Image</div>
+                                </div>
+                                <div class="tp-section-content">
+                                    <div class="tp-control-item">
+                                        <div class="tp-label">Background Image</div>
+                                        <input type="file" accept="image/*" style="display: none;">
+                                        <div class="tp-button-group">
+                                            <button class="tp-button tp-button-secondary">
+                                                <div class="tp-button-title">Upload Image</div>
+                                            </button>
+                                            <button class="tp-button tp-button-danger">
+                                                <div class="tp-button-title">Remove Image</div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">5. Test Background Color Change</div>
+            <div class="tp-pane">
+                <div class="tp-root">
+                    <div class="tp-folder tp-folder-expanded">
+                        <div class="tp-folder-header">
+                            <div class="tp-folder-title">Background Test</div>
+                        </div>
+                        <div class="tp-folder-content">
+                            <div class="tp-section">
+                                <div class="tp-section-header">
+                                    <div class="tp-section-title">Test Area</div>
+                                </div>
+                                <div class="tp-section-content">
+                                    <div class="tp-control-item">
+                                        <div class="tp-label">Change Background</div>
+                                        <select id="test-bg-select" class="tp-select">
+                                            <option value="#1a1a1a">Dark (Current)</option>
+                                            <option value="#FFFFFF">White</option>
+                                            <option value="#FF0000">Red</option>
+                                            <option value="#0000FF">Blue</option>
+                                            <option value="#FFFF00">Yellow</option>
+                                        </select>
+                                        <div class="tp-hint">This will change the page background to test white
+                                            background visibility</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test background color change
+        document.getElementById('test-bg-select').addEventListener('change', function () {
+            document.body.style.background = this.value;
+            if (this.value === '#FFFFFF') {
+                document.body.style.color = '#000';
+            } else {
+                document.body.style.color = '#fff';
+            }
+        });
+
+        // Test background color select
+        document.getElementById('background-color-select').addEventListener('change', function () {
+            console.log('Background color selected:', this.value);
+            alert('Background color selected: ' + this.value);
+        });
+    </script>
+</body>
+
+</html>

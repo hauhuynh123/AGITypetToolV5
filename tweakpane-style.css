@@ -177,7 +177,8 @@
 .tp-button-group {
     display: flex;
     gap: 8px;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .tp-button {
@@ -226,7 +227,7 @@
 }
 
 .tp-button-danger:hover {
-    background: #9a9a9a;
+    background: #9a9a9as;
 }
 
 .tp-button-small {
