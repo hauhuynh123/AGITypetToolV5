@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnamese Input Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .demo-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .example {
+            background: #e8f4f8;
+            padding: 10px;
+            border-left: 4px solid #2196F3;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .char-box {
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hướng dẫn gõ tiếng Việt - Vietnamese Input Guide</h1>
+    
+    <div class="instructions">
+        <strong>Cách sử dụng:</strong> Mở file <code>index.html</code> và bật chế độ "Tiếng Việt" để thử nghiệm gõ tiếng Việt.
+    </div>
+
+    <div class="demo-section">
+        <h2>Phương pháp Telex</h2>
+        <p>Đây là phương pháp phổ biến nhất để gõ tiếng Việt:</p>
+        
+        <h3>Dấu thanh (Tone marks):</h3>
+        <div class="example">
+            s = sắc (acute): as → á<br>
+            f = huyền (grave): af → à<br>
+            r = hỏi (hook): ar → ả<br>
+            x = ngã (tilde): ax → ã<br>
+            j = nặng (dot): aj → ạ
+        </div>
+        
+        <h3>Chữ cái đặc biệt:</h3>
+        <div class="example">
+            aa → â (circumflex)<br>
+            aw → ă (breve)<br>
+            dd → đ (stroke)<br>
+            ee → ê (circumflex)<br>
+            oo → ô (circumflex)<br>
+            ow → ơ (horn)<br>
+            uw → ư (horn)
+        </div>
+        
+        <h3>Ví dụ từ hoàn chỉnh:</h3>
+        <div class="example">
+            Vieetj → Việt<br>
+            naams → năms → năm<br>
+            hoqc → học<br>
+            tieesng → tiếng<br>
+            truowngf → trường
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>Bảng chữ cái tiếng Việt có sẵn</h2>
+        <p>Các ký tự SVG được hỗ trợ trong dự án:</p>
+        
+        <div class="character-grid">
+            <div class="char-box">A Á À Ả Ã Ạ</div>
+            <div class="char-box">Â Ấ Ầ Ẩ Ẫ Ậ</div>
+            <div class="char-box">Ă Ắ Ằ Ẳ Ẵ Ặ</div>
+            <div class="char-box">E É È Ẻ Ẽ Ẹ</div>
+            <div class="char-box">Ê Ế Ề Ể Ễ Ệ</div>
+            <div class="char-box">I Í Ì Ỉ Ĩ Ị</div>
+            <div class="char-box">O Ó Ò Ỏ Õ Ọ</div>
+            <div class="char-box">Ô Ố Ồ Ổ Ỗ Ộ</div>
+            <div class="char-box">Ơ Ớ Ờ Ở Ỡ Ợ</div>
+            <div class="char-box">U Ú Ù Ủ Ũ Ụ</div>
+            <div class="char-box">Ư Ứ Ừ Ử Ữ Ự</div>
+            <div class="char-box">Y Ý Ỳ Ỷ Ỹ Ỵ</div>
+            <div class="char-box">Đ</div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>Test Cases - Các trường hợp thử nghiệm</h2>
+        <p>Thử gõ những từ sau trong ứng dụng chính:</p>
+        
+        <div class="example">
+            <strong>Từ đơn giản:</strong><br>
+            - em (gõ: em)<br>
+            - bé (gõ: bes)<br>
+            - là (gõ: laf)<br>
+            - gì (gõ: gij)<br>
+            - nào (gõ: naof)
+        </div>
+        
+        <div class="example">
+            <strong>Từ có dấu mũ/móc:</strong><br>
+            - âm (gõ: aam)<br>
+            - ăn (gõ: awn)<br>
+            - ươi (gõ: uowi)<br>
+            - êm (gõ: eem)<br>
+            - ôm (gõ: oom)
+        </div>
+        
+        <div class="example">
+            <strong>Từ phức tạp:</strong><br>
+            - Việt Nam (gõ: Vieetj Naam)<br>
+            - trường học (gõ: truowngf hoqc)<br>
+            - tiếng Việt (gõ: tieesng Vieetj)<br>
+            - xin chào (gõ: xin chaof)<br>
+            - cảm ơn (gõ: carm own)
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>Phương pháp VNI (tùy chọn)</h2>
+        <p>Sử dụng số để thêm dấu:</p>
+        <div class="example">
+            1 = sắc: a1 → á<br>
+            2 = huyền: a2 → à<br>
+            3 = hỏi: a3 → ả<br>
+            4 = ngã: a4 → ã<br>
+            5 = nặng: a5 → ạ<br>
+            6 = mũ: a6 → â, e6 → ê, o6 → ô<br>
+            7 = móc: a7 → ă<br>
+            8 = sừng: o8 → ơ, u8 → ư<br>
+            9 = gạch: d9 → đ
+        </div>
+    </div>
+</body>
+</html>

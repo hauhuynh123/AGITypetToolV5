@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Type Tool Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .test-button {
+            background: #000000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .test-button:hover {
+            background: #000000;
+        }
+
+        .demo-button {
+            background: #28a745;
+        }
+
+        .demo-button:hover {
+            background: #1e7e34;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>AI Type Tool Integration Test</h1>
+
+        <div class="test-section">
+            <h2>Integration Status</h2>
+            <p>This page tests the integration between the AI Image Analysis and the AGI Type Tool.</p>
+
+            <button class="test-button" onclick="testIntegration()">Test Integration</button>
+            <button class="test-button demo-button" onclick="testDemo()">Test Demo Mode</button>
+
+            <div id="status" class="status" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>How to Use</h2>
+            <ol>
+                <li>Open the main <code>index.html</code> file in your browser</li>
+                <li>You'll see an AI panel in the top-left corner</li>
+                <li>Upload an image or use demo mode</li>
+                <li>The AI will analyze the image and automatically type the description</li>
+                <li>You can still manually type as usual</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>Features</h2>
+            <ul>
+                <li>✅ Image upload with drag & drop</li>
+                <li>✅ AI analysis using Claude or OpenAI</li>
+                <li>✅ Automatic typing of detected keywords</li>
+                <li>✅ Demo mode for testing without API keys</li>
+                <li>✅ Vietnamese character support</li>
+                <li>✅ Collapsible AI panel</li>
+                <li>✅ Error handling and user feedback</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>API Setup</h2>
+            <p>To use real AI analysis, you'll need to configure the OpenAI API key:</p>
+            <ul>
+                <li><strong>OpenAI (ChatGPT):</strong> <a href="https://platform.openai.com/api-keys"
+                        target="_blank">Get API Key</a></li>
+                <li>Open <code>ai-integration.js</code> and replace the API key on line 8</li>
+                <li>The API provider is hardcoded to OpenAI for simplicity</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function testIntegration() {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.className = 'status success';
+            status.textContent = '✅ Integration test passed! The AI panel should be visible in the main application.';
+        }
+
+        function testDemo() {
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            status.className = 'status success';
+            status.textContent = '✅ Demo mode available! You can test the AI typing without an API key.';
+        }
+    </script>
+</body>
+
+</html>

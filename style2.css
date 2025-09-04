@@ -1,0 +1,72 @@
+:root {
+  --foreground: invert(13%) sepia(97%) saturate(6543%) hue-rotate(4deg) brightness(98%) contrast(115%);
+  --spacing: 0.1%;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#wrapper {
+  width: calc(100vw - 4em);
+  height: calc(100vh - 4em);
+  display: flex;
+  flex-direction: row;
+}
+
+/* .letter {
+  flex-grow: 1;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin: 0 var(--spacing);
+  filter: var(--foreground);
+} */
+
+.letter,
+.number,
+.symbol,
+.vietnamese {
+  flex: 1;
+  height: 100%;
+  width: auto;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  margin: 0 var(--spacing);
+  filter: var(--foreground);
+  transition: flex-grow 0.2s cubic-bezier(1, 0, 0, 1);
+}
+
+#space {
+  width: 0%;
+}
+
+.word {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  margin: 0.5em 0.0em;
+  height: 100%;
+  transition: flex-grow 0.2s cubic-bezier(1, 0, 0, 1);
+}
+
+.word:hover {
+  /* Khi hover, flex sẽ nhân với 20 */
+  /* Sử dụng !important để ghi đè inline style nếu cần */
+  flex: calc(var(--word-flex, 1) * 16) !important;
+  transition: flex 0.2s ease-out;
+}
+
+*/
+
+/* Disable hover effects when no-hover class is applied */
+body.no-hover .word:hover {
+  flex: var(--word-flex, 1) !important;
+  transition: none !important;
+}

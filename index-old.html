@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGI Type Tool with AI Image Analysis</title>
+</head>
+<link id="main-style" rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="tweakpane-style.css">
+
+<body onload="setTheme()">
+  <!-- Unified Settings Panel (Tweakpane Style) -->
+  <div id="settings-panel" class="tp-container">
+    <div class="tp-folder-header">
+      <div class="tp-folder-title">Settings</div>
+      <button class="tp-folder-toggle" id="settingsToggle">−</button>
+    </div>
+    
+    <div class="tp-folder-content" id="settingsContent">
+      
+      <!-- Layout Folder -->
+      <div class="tp-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">Layout</div>
+          <div class="tp-folder-toggle">−</div>
+        </div>
+        <div class="tp-folder-content">
+          <div class="tp-row">
+            <div class="tp-label">Horizontal</div>
+            <div class="tp-value">
+              <div class="tp-checkbox">
+                <input type="checkbox" id="horizontalLayout" checked>
+                <div class="tp-checkbox-check"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tp-row">
+            <div class="tp-label">Slider</div>
+            <div class="tp-value">
+              <div class="tp-slider-text">
+                <div class="tp-slider">
+                  <input type="range" id="layoutSlider" min="0" max="100" value="50">
+                  <div class="tp-slider-track"></div>
+                  <div class="tp-slider-knob"></div>
+                </div>
+                <div class="tp-text">
+                  <input type="number" id="layoutValue" value="50.00" step="0.01">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tp-row">
+            <div class="tp-label">Text</div>
+            <div class="tp-value">
+              <select class="tp-select" id="textSize">
+                <option value="small">small</option>
+                <option value="medium" selected>medium</option>
+                <option value="large">large</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Folder -->
+      <div class="tp-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">Input</div>
+          <div class="tp-folder-toggle">−</div>
+        </div>
+        <div class="tp-folder-content">
+          <div class="tp-row">
+            <div class="tp-label">Vietnamese input</div>
+            <div class="tp-value">
+              <div class="tp-checkbox">
+                <input type="checkbox" id="vietnameseInput" checked>
+                <div class="tp-checkbox-check"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Folder -->
+      <div class="tp-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">Content</div>
+          <div class="tp-folder-toggle">−</div>
+        </div>
+        <div class="tp-folder-content">
+          <div class="tp-row">
+            <div class="tp-value tp-full-width">
+              <div class="tp-textarea">
+                <textarea id="manualTextInput" placeholder="Input text here" rows="4"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="tp-button-row">
+            <button class="tp-button" id="manualTypeBtn">Type text</button>
+            <button class="tp-button" id="removeWordBtn">Remove last word</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contextual Image Definition Folder -->
+      <div class="tp-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">Contextual image definition</div>
+          <div class="tp-folder-toggle">−</div>
+        </div>
+        <div class="tp-folder-content">
+          <div class="tp-row">
+            <div class="tp-value tp-full-width">
+              <div class="tp-dropzone" id="uploadArea">
+                <div class="tp-dropzone-content">
+                  <div class="tp-dropzone-text">Drop your image here</div>
+                </div>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+              </div>
+            </div>
+          </div>
+          <div class="tp-button-row">
+            <button class="tp-button" id="processBtn">Run</button>
+            <button class="tp-button" id="demoBtn">Demo</button>
+          </div>
+          
+          <!-- Hidden elements for compatibility -->
+          <img id="imagePreview" class="image-preview" alt="Preview" style="display: none;">
+          <div class="loading" id="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <div>Analyzing image...</div>
+          </div>
+          <div class="result" id="result" style="display: none;">
+            <div id="resultText"></div>
+            <button class="reset-btn" id="resetBtn">Try again</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas Folder -->
+      <div class="tp-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">Canvas</div>
+          <div class="tp-folder-toggle">−</div>
+        </div>
+        <div class="tp-folder-content">
+          <div class="tp-row">
+            <div class="tp-label">Size</div>
+            <div class="tp-value">
+              <div class="tp-point2d">
+                <button class="tp-button tp-icon">+</button>
+                <div class="tp-point2d-inputs">
+                  <input type="number" id="canvasWidth" value="1200" step="1">
+                  <input type="number" id="canvasHeight" value="800" step="1">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tp-row">
+            <div class="tp-label">Full Screen</div>
+            <div class="tp-value">
+              <div class="tp-checkbox">
+                <input type="checkbox" id="fullScreen">
+                <div class="tp-checkbox-check"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Animation Folder -->
+      <div class="tp-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">Animation</div>
+          <div class="tp-folder-toggle">−</div>
+        </div>
+        <div class="tp-folder-content">
+          <div class="tp-row">
+            <div class="tp-label">One Word</div>
+            <div class="tp-value">
+              <div class="tp-checkbox">
+                <input type="checkbox" id="oneWordAnimation">
+                <div class="tp-checkbox-check"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tp-row">
+            <div class="tp-label">Sound react</div>
+            <div class="tp-value">
+              <div class="tp-checkbox">
+                <input type="checkbox" id="soundReact">
+                <div class="tp-checkbox-check"></div>
+              </div>
+            </div>
+          </div>
+          <div class="tp-row">
+            <div class="tp-label">Typing Speed</div>
+            <div class="tp-value">
+              <div class="tp-slider-text">
+                <div class="tp-slider">
+                  <input type="range" id="typingSpeed" min="50" max="500" value="250">
+                  <div class="tp-slider-track"></div>
+                  <div class="tp-slider-knob"></div>
+                </div>
+                <div class="tp-text">
+                  <input type="number" id="typingSpeedValue" value="250.0" step="0.1">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Background Color Folder -->
+      <div class="tp-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">Background color</div>
+          <div class="tp-folder-toggle">−</div>
+        </div>
+        <div class="tp-folder-content">
+          <div class="tp-row">
+            <div class="tp-label">Background</div>
+            <div class="tp-value">
+              <select class="tp-select" id="backgroundColor">
+                <option value="red" selected>red</option>
+                <option value="blue">blue</option>
+                <option value="green">green</option>
+                <option value="black">black</option>
+                <option value="white">white</option>
+              </select>
+            </div>
+          </div>
+          <div class="tp-row">
+            <div class="tp-label">Text</div>
+            <div class="tp-value">
+              <select class="tp-select" id="textColor">
+                <option value="black" selected>black</option>
+                <option value="white">white</option>
+                <option value="red">red</option>
+                <option value="blue">blue</option>
+                <option value="green">green</option>
+              </select>
+            </div>
+          </div>
+          <div class="tp-row">
+            <div class="tp-label">Image bg</div>
+            <div class="tp-value">
+              <button class="tp-button" id="addImageBg">Add image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Folder -->
+      <div class="tp-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">Export</div>
+          <div class="tp-folder-toggle">−</div>
+        </div>
+        <div class="tp-folder-content">
+          <div class="tp-row">
+            <div class="tp-label">SVG</div>
+            <div class="tp-value">
+              <button class="tp-button" id="exportSVG">Export</button>
+            </div>
+          </div>
+          <div class="tp-row">
+            <div class="tp-label">PNG</div>
+            <div class="tp-value">
+              <button class="tp-button" id="exportPNG">Export</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <div id="wrapper"></div>
+</body>
+<script src="svgLength.js"></script>
+<script src="scripts copy.js"></script>
+<script src="randomNoise.js"></script>
+<script src="sequentialAnimation.js"></script>
+<script src="audioFlex.js"></script>
+<script src="vietnamese-input.js"></script>
+<script src="svgExport.js"></script>
+<script src="tweakpane-integration.js"></script>
+<script>
+  // Legacy compatibility functions
+  function toggleHoverEffects(enabled) {
+    const body = document.body;
+    if (enabled) {
+      body.classList.remove('no-hover');
+      console.log('Hover effects ENABLED - removed no-hover class');
+    } else {
+      body.classList.add('no-hover');
+      console.log('Hover effects DISABLED - added no-hover class');
+    }
+    console.log('Body classes:', body.className);
+  }
+
+  function applyCanvasSize(width, height) {
+    const wrapper = document.getElementById('wrapper');
+    wrapper.style.width = width + 'px';
+    wrapper.style.height = height + 'px';
+
+    // Store canvas size globally for export
+    window.canvasWidth = parseInt(width);
+    window.canvasHeight = parseInt(height);
+
+    console.log('Canvas size applied:', width + 'x' + height);
+  }
+
+  // Theme toggle functionality
+  function setTheme() {
+    // Initialize theme if needed
+    console.log('Theme initialized');
+  }
+
+
+
+  document.getElementById('toggle-audio').addEventListener('change', function (e) {
+    window.toggleAudioFlex(e.target.checked);
+  });
+
+  document.getElementById('toggle-hover').addEventListener('change', function (e) {
+    toggleHoverEffects(e.target.checked);
+    console.log('Hover toggle changed:', e.target.checked);
+  });
+
+  document.getElementById('toggle-animation').addEventListener('change', function (e) {
+    window.toggleSequentialAnimation(e.target.checked);
+  });
+
+  // Export button event listeners
+  document.getElementById('export-svg-btn').addEventListener('click', function () {
+    window.exportSVG();
+  });
+
+  document.getElementById('export-png-btn').addEventListener('click', function () {
+    window.exportPNG();
+  });
+
+  // Debug layout button listener
+  document.getElementById('debug-layout-btn').addEventListener('click', function () {
+    window.debugLayout();
+  });
+
+  // Background color change listener
+  document.getElementById('background-color-select').addEventListener('change', function (e) {
+    document.body.style.backgroundColor = e.target.value;
+  });
+
+  // Canvas size control listeners
+  document.getElementById('apply-canvas-size').addEventListener('click', function () {
+    const width = document.getElementById('canvas-width').value;
+    const height = document.getElementById('canvas-height').value;
+    applyCanvasSize(width, height);
+  });
+
+  // Fullscreen canvas button
+  document.getElementById('fullscreen-canvas-btn').addEventListener('click', function () {
+    applyFullscreenCanvas();
+  });
+
+  // Background image controls
+  document.getElementById('upload-image-btn').addEventListener('click', function () {
+    document.getElementById('background-image-input').click();
+  });
+
+  document.getElementById('background-image-input').addEventListener('change', function (e) {
+    if (e.target.files && e.target.files[0]) {
+      loadBackgroundImage(e.target.files[0]);
+    }
+  });
+
+  document.getElementById('remove-image-btn').addEventListener('click', function () {
+    removeBackgroundImage();
+  });
+
+  // Function to toggle hover effects
+  function toggleHoverEffects(enabled) {
+    const body = document.body;
+    if (enabled) {
+      body.classList.remove('no-hover');
+      console.log('Hover effects ENABLED - removed no-hover class');
+    } else {
+      body.classList.add('no-hover');
+      console.log('Hover effects DISABLED - added no-hover class');
+    }
+    console.log('Body classes:', body.className);
+  }
+
+  // Function to apply canvas size
+  function applyCanvasSize(width, height) {
+    const wrapper = document.getElementById('wrapper');
+    wrapper.style.width = width + 'px';
+    wrapper.style.height = height + 'px';
+
+    // Store canvas size globally for export
+    window.canvasWidth = parseInt(width);
+    window.canvasHeight = parseInt(height);
+
+    console.log('Canvas size applied:', width + 'x' + height);
+  }
+
+  // Function to apply fullscreen canvas
+  function applyFullscreenCanvas() {
+    const wrapper = document.getElementById('wrapper');
+    const fullWidth = window.innerWidth - 32; // Account for padding
+    const fullHeight = window.innerHeight - 32;
+
+    wrapper.style.width = fullWidth + 'px';
+    wrapper.style.height = fullHeight + 'px';
+
+    // Update input fields
+    document.getElementById('canvas-width').value = fullWidth;
+    document.getElementById('canvas-height').value = fullHeight;
+
+    // Store canvas size globally for export
+    window.canvasWidth = fullWidth;
+    window.canvasHeight = fullHeight;
+
+    console.log('Fullscreen canvas applied:', fullWidth + 'x' + fullHeight);
+  }
+
+  // Function to load background image
+  function loadBackgroundImage(file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const imageUrl = e.target.result;
+
+      // Set background image
+      document.body.style.backgroundImage = `url('${imageUrl}')`;
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundRepeat = 'no-repeat';
+
+      // Store image data for export
+      window.backgroundImageData = imageUrl;
+
+      // Show remove button
+      document.getElementById('remove-image-btn').style.display = 'inline-block';
+      document.getElementById('upload-image-btn').textContent = 'Change Image';
+
+      console.log('Background image loaded:', file.name);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Function to remove background image
+  function removeBackgroundImage() {
+    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundSize = 'auto';
+    document.body.style.backgroundPosition = 'auto';
+    document.body.style.backgroundRepeat = 'auto';
+
+    // Clear stored image data
+    window.backgroundImageData = null;
+
+    // Hide remove button
+    document.getElementById('remove-image-btn').style.display = 'none';
+    document.getElementById('upload-image-btn').textContent = 'Upload Image';
+
+    console.log('Background image removed');
+  }
+
+  // Function to initialize settings
+  function initializeSettings() {
+    // Set default background color to red
+    const bgSelect = document.getElementById('background-color-select');
+    bgSelect.value = '#FF0000';
+    document.body.style.backgroundColor = '#FF0000';
+
+    // Set default canvas size
+    window.canvasWidth = 1200;
+    window.canvasHeight = 800;
+    applyCanvasSize(window.canvasWidth, window.canvasHeight);
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', function () {
+    initializeSettingsPopup();
+    initializeSettings();
+
+    // Wait a bit for all elements to be ready
+    setTimeout(() => {
+      const hoverCheckbox = document.getElementById('toggle-hover');
+      if (hoverCheckbox) {
+        // Initialize hover effects as enabled by default
+        toggleHoverEffects(hoverCheckbox.checked);
+        console.log('Hover checkbox initialized:', hoverCheckbox.checked);
+      } else {
+        console.error('toggle-hover checkbox not found!');
+      }
+    }, 100);
+  });
+</script>
+
+</html>

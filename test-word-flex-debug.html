@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Flex Debug Test</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 350px;
+            font-family: monospace;
+        }
+
+        .test-steps {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .test-steps h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+
+        #wrapper {
+            min-height: 200px;
+            border: 2px dashed #666;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .word {
+            display: inline-flex;
+            margin-right: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .word::after {
+            content: attr(data-flex);
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            font-size: 10px;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .letter {
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 1px;
+            position: relative;
+        }
+
+        .letter::after {
+            content: attr(data-flex);
+            position: absolute;
+            top: -15px;
+            left: 0;
+            font-size: 8px;
+            color: #888;
+            font-family: monospace;
+            white-space: nowrap;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .log-entry {
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+
+        .log-error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+
+        .log-warn {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+
+        .log-info {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="debug-panel">
+        <div><strong>Word Flex Debug</strong></div>
+        <div id="current-state">
+            Words: <span id="word-count">0</span><br>
+            Current: <span id="current-word-flex">null</span><br>
+            Last: <span id="last-action">none</span>
+        </div>
+        <hr style="margin: 10px 0; border: 1px solid #555;">
+        <div id="debug-log" style="max-height: 200px; overflow-y: auto;">
+            <div class="log-info">Debug log started</div>
+        </div>
+    </div>
+
+    <h1>🔧 Word Flex Rendering Debug</h1>
+
+    <div class="test-steps">
+        <h3>Test Case: Space → SVG Rendering Issue</h3>
+        <ol>
+            <li>Type some letters (e.g., "hello")</li>
+            <li>Press SPACE (creates new word)</li>
+            <li>Type next character → Should render immediately</li>
+            <li>Check flex values in debug panel</li>
+        </ol>
+        <p><strong>Bug:</strong> SVG không render ở ký tự đầu tiên của word mới.</p>
+        <p><strong>Fix:</strong> Empty word containers should have valid flex values.</p>
+    </div>
+
+    <div style="margin: 20px 0;">
+        <button onclick="testSequence()">Test Problem Sequence</button>
+        <button onclick="clearAndReset()">Clear & Reset</button>
+        <button onclick="inspectAllWords()">Inspect All Words</button>
+        <button onclick="forceUpdateFlex()">Force Update Flex</button>
+    </div>
+
+    <!-- Main typing area -->
+    <div id="wrapper">
+        <p style="color: #666; text-align: center; margin: 0;">
+            Type letters → SPACE → More letters. Watch flex values in debug panel.
+        </p>
+    </div>
+
+    <!-- Include the fixed scripts -->
+    <script src="getSvgHeight.js"></script>
+    <script src="scripts copy.js"></script>
+
+    <script>
+        // Override updateWordFlex to add debugging
+        const originalUpdateWordFlex = window.updateWordFlex;
+        window.updateWordFlex = function (word) {
+            const beforeFlex = word.style.flex;
+            originalUpdateWordFlex(word);
+            const afterFlex = word.style.flex;
+
+            const letterCount = word.querySelectorAll('.letter').length;
+            logDebug(`updateWordFlex: ${letterCount} letters, flex: ${beforeFlex} → ${afterFlex}`,
+                afterFlex === 'Infinity' ? 'error' : 'info');
+
+            // Add flex value as data attribute for visual debugging
+            word.setAttribute('data-flex', `flex: ${afterFlex}`);
+            word.querySelectorAll('.letter').forEach(letter => {
+                letter.setAttribute('data-flex', letter.style.flex || '1');
+            });
+
+            updateDebugState();
+        };
+
+        // Override createWordContainer to add debugging
+        const originalCreateWordContainer = window.createWordContainer;
+        window.createWordContainer = function () {
+            const word = originalCreateWordContainer();
+            logDebug(`Created new word container, flex: ${word.style.flex}`, 'info');
+            updateDebugState();
+            return word;
+        };
+
+        function logDebug(message, type = 'info') {
+            const log = document.getElementById('debug-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+
+            document.getElementById('last-action').textContent = message;
+        }
+
+        function updateDebugState() {
+            const words = document.querySelectorAll('#wrapper .word');
+            document.getElementById('word-count').textContent = words.length;
+
+            const currentWordFlex = window.currentWord ?
+                `${window.currentWord.style.flex} (${window.currentWord.querySelectorAll('.letter').length} chars)` :
+                'null';
+            document.getElementById('current-word-flex').textContent = currentWordFlex;
+        }
+
+        function testSequence() {
+            clearAndReset();
+            logDebug('Starting test sequence', 'info');
+
+            // Step 1: Type "HELLO"
+            setTimeout(() => {
+                simulateKeySequence(['H', 'E', 'L', 'L', 'O']);
+                logDebug('Typed HELLO', 'info');
+            }, 500);
+
+            // Step 2: Press SPACE (creates new word)
+            setTimeout(() => {
+                simulateSpace();
+                logDebug('Pressed SPACE - new word created', 'warn');
+                inspectAllWords();
+            }, 2000);
+
+            // Step 3: Type first character of new word
+            setTimeout(() => {
+                simulateKey('W');
+                logDebug('Typed W in new word - check if it renders', 'info');
+                inspectAllWords();
+            }, 3000);
+
+            // Step 4: Type more characters
+            setTimeout(() => {
+                simulateKeySequence(['O', 'R', 'L', 'D']);
+                logDebug('Completed WORLD', 'info');
+                inspectAllWords();
+            }, 4000);
+        }
+
+        function simulateKeySequence(keys) {
+            keys.forEach((key, index) => {
+                setTimeout(() => simulateKey(key), index * 100);
+            });
+        }
+
+        function simulateKey(key) {
+            const event = new KeyboardEvent('keydown', {
+                key: key,
+                keyCode: key.charCodeAt(0),
+                which: key.charCodeAt(0),
+                bubbles: true,
+                cancelable: true
+            });
+            document.dispatchEvent(event);
+        }
+
+        function simulateSpace() {
+            const event = new KeyboardEvent('keydown', {
+                key: ' ',
+                keyCode: 32,
+                which: 32,
+                bubbles: true,
+                cancelable: true
+            });
+            document.dispatchEvent(event);
+        }
+
+        function clearAndReset() {
+            document.getElementById('wrapper').innerHTML = '';
+            window.currentWord = null;
+            document.getElementById('debug-log').innerHTML = '<div class="log-info">Log cleared</div>';
+            logDebug('System reset', 'info');
+            updateDebugState();
+        }
+
+        function inspectAllWords() {
+            const words = document.querySelectorAll('#wrapper .word');
+            words.forEach((word, index) => {
+                const letterCount = word.querySelectorAll('.letter').length;
+                const flex = word.style.flex;
+                const wordFlex = word.style.getPropertyValue('--word-flex');
+
+                const status = flex === 'Infinity' ? 'ERROR' :
+                    flex === '' ? 'MISSING' : 'OK';
+
+                logDebug(`Word ${index}: ${letterCount} letters, flex=${flex}, --word-flex=${wordFlex} [${status}]`,
+                    status === 'ERROR' ? 'error' : status === 'MISSING' ? 'warn' : 'info');
+            });
+        }
+
+        function forceUpdateFlex() {
+            const words = document.querySelectorAll('#wrapper .word');
+            words.forEach(word => {
+                if (window.updateWordFlex) {
+                    window.updateWordFlex(word);
+                }
+            });
+            logDebug('Forced flex update on all words', 'info');
+        }
+
+        // Monitor keydown events
+        document.addEventListener('keydown', function (e) {
+            if (e.keyCode === 32) {
+                logDebug('SPACE key detected', 'warn');
+            } else if (e.keyCode >= 65 && e.keyCode <= 90) {
+                logDebug(`Letter ${String.fromCharCode(e.keyCode)} key detected`, 'info');
+            }
+        });
+
+        // Initialize
+        setTimeout(() => {
+            updateDebugState();
+            logDebug('Debug tool initialized', 'info');
+        }, 100);
+
+        console.log('🔧 Word Flex Debug Tool loaded');
+        console.log('- Use "Test Problem Sequence" to reproduce the issue');
+        console.log('- Watch debug panel for flex values');
+        console.log('- Look for Infinity or missing flex values');
+    </script>
+</body>
+
+</html>

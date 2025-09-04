@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnamese Input Test - Telex Method</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .telex-examples {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .example {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Vietnamese Input Test - Telex Method</h1>
+
+        <div class="test-section">
+            <h2>Telex Input Method</h2>
+            <p>The Vietnamese input system now uses only the Telex method for typing Vietnamese characters with
+                diacritics.</p>
+
+            <div class="telex-examples">
+                <h3>Telex Input Examples:</h3>
+                <div class="example"><strong>aa</strong> → â (circumflex)</div>
+                <div class="example"><strong>aw</strong> → ă (breve)</div>
+                <div class="example"><strong>ee</strong> → ê (circumflex)</div>
+                <div class="example"><strong>oo</strong> → ô (circumflex)</div>
+                <div class="example"><strong>ow</strong> → ơ (horn)</div>
+                <div class="example"><strong>uw</strong> → ư (horn)</div>
+                <div class="example"><strong>dd</strong> → đ (stroke)</div>
+                <br>
+                <div class="example"><strong>s</strong> → sắc (acute) - á, ấ, ắ, é, ế, í, ó, ố, ớ, ú, ứ, ý</div>
+                <div class="example"><strong>f</strong> → huyền (grave) - à, ầ, ằ, è, ề, ì, ò, ồ, ờ, ù, ừ, ỳ</div>
+                <div class="example"><strong>r</strong> → hỏi (hook) - ả, ẩ, ẳ, ẻ, ể, ỉ, ỏ, ổ, ở, ủ, ử, ỷ</div>
+                <div class="example"><strong>x</strong> → ngã (tilde) - ã, ẫ, ẵ, ẽ, ễ, ĩ, õ, ỗ, ỡ, ũ, ữ, ỹ</div>
+                <div class="example"><strong>j</strong> → nặng (dot) - ạ, ậ, ặ, ẹ, ệ, ị, ọ, ộ, ợ, ụ, ự, ỵ</div>
+            </div>
+
+            <div class="status success">
+                ✅ VNI method has been removed. Only Telex method is now supported.
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>How to Test</h2>
+            <ol>
+                <li>Open the main <code>index.html</code> file</li>
+                <li>Go to Settings and enable "Vietnamese Input"</li>
+                <li>Try typing Vietnamese characters using Telex method:</li>
+                <ul>
+                    <li>Type <code>aa</code> to get â</li>
+                    <li>Type <code>aas</code> to get ấ</li>
+                    <li>Type <code>dd</code> to get đ</li>
+                    <li>Type <code>ow</code> to get ơ</li>
+                </ul>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>Changes Made</h2>
+            <ul>
+                <li>✅ Removed VNI input method completely</li>
+                <li>✅ Kept Telex as the only Vietnamese input method</li>
+                <li>✅ Simplified the settings panel (removed method selection)</li>
+                <li>✅ Removed unused VNI processing code</li>
+                <li>✅ Updated documentation to reflect Telex-only support</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

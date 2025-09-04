@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Space Handling - AI Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .test-button {
+            background: #000000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .test-button:hover {
+            background: #333;
+        }
+
+        .demo-output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            min-height: 100px;
+            border: 2px solid #ddd;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Test Space Handling - AI Integration</h1>
+
+        <div class="test-section">
+            <h2>Space Handling Test</h2>
+            <p>Test to verify that spaces in AI-generated keywords create new words instead of rendering space.svg</p>
+
+            <button class="test-button" onclick="testSpaceHandling()">Test "Hello World"</button>
+            <button class="test-button" onclick="testVietnamese()">Test "Cảnh Đẹp"</button>
+            <button class="test-button" onclick="testMultipleWords()">Test "Một Hai Ba"</button>
+            <button class="test-button" onclick="clearTest()">Clear</button>
+
+            <div class="demo-output" id="testOutput">
+                <p>Test output will appear here...</p>
+            </div>
+
+            <div class="status success">
+                ✅ Spaces should create new .word containers, not render space.svg
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Expected Behavior</h2>
+            <ul>
+                <li>Each word should be in a separate .word container</li>
+                <li>No space.svg should be rendered</li>
+                <li>Words should be separated visually by the CSS layout</li>
+                <li>Vietnamese characters should work with the Vietnamese input system</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Simple mock for testing space handling
+        class MockAIIntegration {
+            constructor() {
+                this.initializeTestEnvironment();
+            }
+
+            initializeTestEnvironment() {
+                // Create mock wrapper if it doesn't exist
+                let wrapper = document.getElementById('wrapper');
+                if (!wrapper) {
+                    wrapper = document.createElement('div');
+                    wrapper.id = 'wrapper';
+                    wrapper.style.cssText = `
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 10px;
+                        padding: 10px;
+                        background: white;
+                        border: 1px solid #ccc;
+                    `;
+                    document.getElementById('testOutput').appendChild(wrapper);
+                }
+
+                // Mock createWordContainer function
+                window.createWordContainer = () => {
+                    const word = document.createElement('div');
+                    word.classList.add('word');
+                    word.style.cssText = `
+                        display: flex;
+                        background: #e3f2fd;
+                        border: 1px solid #2196f3;
+                        padding: 5px;
+                        margin: 2px;
+                        border-radius: 3px;
+                    `;
+                    wrapper.appendChild(word);
+                    return word;
+                };
+
+                // Mock Vietnamese input
+                window.vietnameseInput = {
+                    isVietnameseMode: true,
+                    displayCharacter: (char) => {
+                        if (!window.currentWord) {
+                            window.currentWord = window.createWordContainer();
+                        }
+                        const letter = document.createElement('span');
+                        letter.textContent = char;
+                        letter.style.cssText = `
+                            display: inline-block;
+                            padding: 2px;
+                            background: #fff3e0;
+                            border: 1px solid #ff9800;
+                            margin: 1px;
+                        `;
+                        window.currentWord.appendChild(letter);
+                    }
+                };
+            }
+
+            createNewWord() {
+                if (window.createWordContainer) {
+                    window.currentWord = window.createWordContainer();
+                } else {
+                    const word = document.createElement('div');
+                    word.classList.add('word');
+                    word.style.cssText = `
+                        display: flex;
+                        background: #e3f2fd;
+                        border: 1px solid #2196f3;
+                        padding: 5px;
+                        margin: 2px;
+                        border-radius: 3px;
+                    `;
+                    const wrapper = document.getElementById('wrapper');
+                    if (wrapper) {
+                        wrapper.appendChild(word);
+                        window.currentWord = word;
+                    }
+                }
+            }
+
+            simulateKeyPress(char) {
+                // Handle space ALWAYS as a word separator, regardless of Vietnamese mode
+                if (char === ' ') {
+                    // Create new word directly instead of simulating keypress
+                    this.createNewWord();
+                    return;
+                }
+
+                // Use the Vietnamese input system if available for other characters
+                if (window.vietnameseInput && window.vietnameseInput.isVietnameseMode) {
+                    // For Vietnamese characters, use the Vietnamese input system
+                    window.vietnameseInput.displayCharacter(char);
+                } else {
+                    // For regular characters, display directly for testing
+                    if (!window.currentWord) {
+                        window.currentWord = window.createWordContainer();
+                    }
+                    const letter = document.createElement('span');
+                    letter.textContent = char;
+                    letter.style.cssText = `
+                        display: inline-block;
+                        padding: 2px;
+                        background: #f3e5f5;
+                        border: 1px solid #9c27b0;
+                        margin: 1px;
+                    `;
+                    window.currentWord.appendChild(letter);
+                }
+            }
+
+            simulateTyping(text) {
+                const words = text.split(' ');
+                let wordIndex = 0;
+                let charIndex = 0;
+
+                const typeNextChar = () => {
+                    if (wordIndex >= words.length) return;
+
+                    const word = words[wordIndex];
+                    if (charIndex >= word.length) {
+                        // Move to next word
+                        wordIndex++;
+                        charIndex = 0;
+                        if (wordIndex < words.length) {
+                            // Add space between words
+                            this.simulateKeyPress(' ');
+                            setTimeout(typeNextChar, 100);
+                        }
+                        return;
+                    }
+
+                    const char = word[charIndex];
+                    this.simulateKeyPress(char);
+                    charIndex++;
+
+                    setTimeout(typeNextChar, 150); // Typing speed
+                };
+
+                typeNextChar();
+            }
+
+            typeDescription(description) {
+                // Clear existing content
+                const wrapper = document.getElementById("wrapper");
+                if (wrapper) {
+                    wrapper.innerHTML = "";
+                }
+                window.currentWord = null;
+
+                // Create the first word container
+                this.createNewWord();
+
+                // Simulate typing the description
+                this.simulateTyping(description);
+            }
+        }
+
+        // Initialize mock
+        const mockAI = new MockAIIntegration();
+
+        function testSpaceHandling() {
+            console.log('Testing: Hello World');
+            mockAI.typeDescription('Hello World');
+        }
+
+        function testVietnamese() {
+            console.log('Testing: Cảnh Đẹp');
+            mockAI.typeDescription('Cảnh Đẹp');
+        }
+
+        function testMultipleWords() {
+            console.log('Testing: Một Hai Ba');
+            mockAI.typeDescription('Một Hai Ba');
+        }
+
+        function clearTest() {
+            const wrapper = document.getElementById('wrapper');
+            if (wrapper) {
+                wrapper.innerHTML = '';
+            }
+            window.currentWord = null;
+        }
+    </script>
+</body>
+
+</html>

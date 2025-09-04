@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tweakpane Design Test - AGI Type Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="settings-popup.css">
+    <link rel="stylesheet" href="ai-integration.css">
+    <link rel="stylesheet" href="tweakpane-style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .test-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .test-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 3000;
+        }
+
+        .test-controls button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .test-controls button:hover {
+            background: #005a9e;
+        }
+
+        #wrapper {
+            min-height: 200px;
+            border: 2px dashed #333;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-header">
+        <h1>🎨 Tweakpane Design Test</h1>
+        <p>Testing the new Tweakpane-style interface for AI Type Tool</p>
+    </div>
+
+    <!-- Test Controls -->
+    <div class="test-controls">
+        <button onclick="toggleAIPanel()">Toggle AI Panel</button>
+        <button onclick="toggleSettings()">Toggle Settings</button>
+        <button onclick="testDemo()">Test Demo</button>
+        <button onclick="switchTheme()">Switch Theme</button>
+    </div>
+
+    <!-- Tweakpane Style AI Panel -->
+    <div id="ai-panel" class="tp-pane">
+        <div class="tp-root">
+            <div class="tp-folder tp-folder-expanded" id="ai-folder">
+                <div class="tp-folder-header">
+                    <div class="tp-folder-title">AI Image Analysis</div>
+                    <button class="tp-folder-toggle" id="ai-panel-toggle">−</button>
+                </div>
+                <div class="tp-folder-content">
+
+                    <!-- Image Upload Section -->
+                    <div class="tp-section">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Image Input</div>
+                        </div>
+                        <div class="tp-section-content">
+                            <div class="tp-upload-area" id="uploadArea">
+                                <div class="tp-upload-text">Drop image here or click</div>
+                            </div>
+                            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                            <img id="imagePreview" class="tp-image-preview" alt="Preview">
+                        </div>
+                    </div>
+
+                    <!-- Analysis Controls -->
+                    <div class="tp-section">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Analysis</div>
+                        </div>
+                        <div class="tp-section-content">
+                            <div class="tp-button-group">
+                                <button class="tp-button tp-button-primary" id="processBtn">
+                                    <div class="tp-button-title">Run Analysis</div>
+                                </button>
+                                <button class="tp-button tp-button-secondary" id="demoBtn">
+                                    <div class="tp-button-title">Demo Mode</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading -->
+                    <div class="tp-loading" id="loading">
+                        <div class="tp-loading-spinner"></div>
+                        <div class="tp-loading-text">Analyzing image...</div>
+                    </div>
+
+                    <!-- Results -->
+                    <div class="tp-result" id="result">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Result</div>
+                        </div>
+                        <div class="tp-result-content">
+                            <div class="tp-result-text" id="resultText"></div>
+                            <button class="tp-button tp-button-small" id="resetBtn">
+                                <div class="tp-button-title">Try Again</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Manual Input Section -->
+                    <div class="tp-section">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Manual Input</div>
+                        </div>
+                        <div class="tp-section-content">
+                            <div class="tp-input-group">
+                                <input type="text" id="manualTextInput" class="tp-text-input"
+                                    placeholder="Enter text to type...">
+                                <div class="tp-button-group">
+                                    <button class="tp-button tp-button-primary" id="manualTypeBtn">
+                                        <div class="tp-button-title">Type Text</div>
+                                    </button>
+                                    <button class="tp-button tp-button-danger" id="removeWordBtn">
+                                        <div class="tp-button-title">Remove Word</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard Toggle -->
+                    <div class="tp-section">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Keyboard Input</div>
+                        </div>
+                        <div class="tp-section-content">
+                            <div class="tp-checkbox-container">
+                                <label class="tp-checkbox-label">
+                                    <input type="checkbox" id="keyboardInputToggle" class="tp-checkbox" checked>
+                                    <span class="tp-checkbox-mark"></span>
+                                    <span class="tp-checkbox-text">Enable Direct Keyboard Input</span>
+                                </label>
+                            </div>
+                            <div class="tp-hint">
+                                When enabled, you can type directly with your keyboard.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settings-popup" class="tp-pane tp-settings-panel" style="display:none;">
+        <div class="tp-root">
+            <div class="tp-folder tp-folder-expanded">
+                <div class="tp-folder-header">
+                    <div class="tp-folder-title">Settings</div>
+                    <button class="tp-folder-toggle" id="settings-close">✕</button>
+                </div>
+                <div class="tp-folder-content">
+
+                    <!-- Text Effects Section -->
+                    <div class="tp-section">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Text Effects</div>
+                        </div>
+                        <div class="tp-section-content">
+
+                            <div class="tp-control-item">
+                                <label class="tp-checkbox-label">
+                                    <input type="checkbox" id="switch-css" class="tp-checkbox">
+                                    <span class="tp-checkbox-mark"></span>
+                                    <span class="tp-checkbox-text">Text Direction</span>
+                                </label>
+                                <div class="tp-hint">Switch between different text layouts and styles</div>
+                            </div>
+
+                            <div class="tp-control-item">
+                                <label class="tp-checkbox-label">
+                                    <input type="checkbox" id="toggle-hover" class="tp-checkbox" checked>
+                                    <span class="tp-checkbox-mark"></span>
+                                    <span class="tp-checkbox-text">Hover Effects</span>
+                                </label>
+                                <div class="tp-hint">Enable word expansion on hover</div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Canvas Settings -->
+                    <div class="tp-section">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Canvas Settings</div>
+                        </div>
+                        <div class="tp-section-content">
+
+                            <div class="tp-control-item">
+                                <div class="tp-label">Background Color</div>
+                                <select id="background-color-select" class="tp-select">
+                                    <option value="#FF0000">Red</option>
+                                    <option value="#0000FF">Blue</option>
+                                    <option value="#FFFF00">Yellow</option>
+                                </select>
+                            </div>
+
+                            <div class="tp-control-item">
+                                <div class="tp-label">Canvas Size</div>
+                                <div class="tp-input-group">
+                                    <div class="tp-number-input-group">
+                                        <label class="tp-number-label">Width:</label>
+                                        <input type="number" id="canvas-width" class="tp-number-input" value="1200">
+                                    </div>
+                                    <div class="tp-number-input-group">
+                                        <label class="tp-number-label">Height:</label>
+                                        <input type="number" id="canvas-height" class="tp-number-input" value="800">
+                                    </div>
+                                </div>
+                                <div class="tp-button-group">
+                                    <button id="apply-canvas-size" class="tp-button tp-button-primary">
+                                        <div class="tp-button-title">Apply Size</div>
+                                    </button>
+                                    <button id="fullscreen-canvas-btn" class="tp-button tp-button-secondary">
+                                        <div class="tp-button-title">Fullscreen</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Vietnamese Input Section -->
+                    <div class="tp-section">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Vietnamese Input</div>
+                        </div>
+                        <div class="tp-section-content" id="vietnamese-controls-container">
+                            <!-- Will be populated by Vietnamese input JS -->
+                            <div class="tp-control-item">
+                                <label class="tp-checkbox-label">
+                                    <input type="checkbox" id="toggle-vietnamese" class="tp-checkbox">
+                                    <span class="tp-checkbox-mark"></span>
+                                    <span class="tp-checkbox-text">Vietnamese Input</span>
+                                </label>
+                                <div class="tp-hint">Enable Vietnamese typing with diacritics and tone marks (Telex
+                                    method)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Backdrop -->
+    <div id="settings-backdrop" style="display:none;"></div>
+
+    <!-- Test Output Area -->
+    <div id="wrapper">
+        <p>Type something or use the AI panel to test the interface!</p>
+    </div>
+
+    <script>
+        // Test functions
+        function toggleAIPanel() {
+            const folder = document.getElementById('ai-folder');
+            const toggle = document.getElementById('ai-panel-toggle');
+            folder.classList.toggle('tp-folder-expanded');
+            toggle.textContent = folder.classList.contains('tp-folder-expanded') ? '−' : '+';
+        }
+
+        function toggleSettings() {
+            const settings = document.getElementById('settings-popup');
+
+            if (settings.style.display === 'none' || !settings.style.display) {
+                settings.style.display = 'block';
+            } else {
+                settings.style.display = 'none';
+            }
+        }
+
+        function testDemo() {
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+
+            // Show loading
+            loading.classList.add('show');
+            result.classList.remove('show');
+
+            // Simulate API call
+            setTimeout(() => {
+                loading.classList.remove('show');
+                result.classList.add('show');
+                resultText.textContent = 'Demo: A beautiful landscape with mountains, trees, and a serene lake reflecting the sky.';
+            }, 2000);
+        }
+
+        function switchTheme() {
+            document.documentElement.style.setProperty('--tp-base-background-color',
+                getComputedStyle(document.documentElement).getPropertyValue('--tp-base-background-color') === '#2f3542'
+                    ? '#ffffff' : '#2f3542');
+        }
+
+        // Settings close handler
+        document.getElementById('settings-close').addEventListener('click', toggleSettings);
+
+        // Demo button handler
+        document.getElementById('demoBtn').addEventListener('click', testDemo);
+
+        // Upload area test
+        document.getElementById('uploadArea').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        console.log('🎨 Tweakpane Design Test Loaded');
+        console.log('- Toggle panels with buttons in top-right');
+        console.log('- Test image upload and demo functionality');
+        console.log('- Check responsive design by resizing window');
+    </script>
+</body>
+
+</html>

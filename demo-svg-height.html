@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Lấy Height của SVG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .demo-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .svg-display {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: white;
+        }
+        .height-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Demo - Lấy Height của SVG</h1>
+        
+        <div class="demo-section">
+            <h3>1. Test với SVG có sẵn</h3>
+            <div id="svg-container">
+                <div class="svg-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="97.478" height="100.017" viewBox="0 0 97.478 100.017" preserveAspectRatio="none">
+                        <path d="M69.546,74.907H27.227l-9.311,25.11H0L38.935,0H58.543L97.478,100.017H79Zm-36.4-15.658h30.47L48.387,18.339Z"/>
+                    </svg>
+                    <div class="height-info">SVG A</div>
+                </div>
+            </div>
+            <button onclick="testSvgElement()">Lấy Height từ Element</button>
+        </div>
+
+        <div class="demo-section">
+            <h3>2. Test với file SVG</h3>
+            <button onclick="testSvgFile()">Lấy Height từ File SVG</button>
+        </div>
+
+        <div class="demo-section">
+            <h3>3. Lấy Height từ tất cả file SVG</h3>
+            <button onclick="testAllSvgFiles()">Lấy Height từ tất cả file</button>
+        </div>
+
+        <div id="results" class="results" style="display: none;"></div>
+    </div>
+
+    <script src="getSvgHeight.js"></script>
+    <script>
+        function showResults(content) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.textContent = content;
+            resultsDiv.style.display = 'block';
+        }
+
+        function showError(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `<div class="error">Lỗi: ${message}</div>`;
+            resultsDiv.style.display = 'block';
+        }
+
+        async function testSvgElement() {
+            try {
+                const svgElement = document.querySelector('svg');
+                const height = getSvgHeight.getSvgHeightFromElement(svgElement);
+                
+                if (height !== null) {
+                    showResults(`Height của SVG element: ${height}px`);
+                } else {
+                    showError('Không thể lấy height từ SVG element');
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        async function testSvgFile() {
+            try {
+                showResults('Đang đọc file SVG...');
+                const height = await getSvgHeight.getSvgHeightFromFile('chars/A.svg');
+                
+                if (height !== null) {
+                    showResults(`Height của file chars/A.svg: ${height}px`);
+                } else {
+                    showError('Không thể đọc file SVG');
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        async function testAllSvgFiles() {
+            try {
+                showResults('Đang đọc tất cả file SVG...\nVui lòng chờ...');
+                
+                const heights = await getSvgHeight.getAllSvgHeights('chars/');
+                
+                if (heights && Object.keys(heights).length > 0) {
+                    let result = '=== Chiều cao của các file SVG ===\n';
+                    for (const [file, height] of Object.entries(heights)) {
+                        result += `${file}: ${height}px\n`;
+                    }
+                    
+                    // Tính toán thống kê
+                    const values = Object.values(heights);
+                    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                    const min = Math.min(...values);
+                    const max = Math.max(...values);
+                    
+                    result += '\n=== Thống kê ===\n';
+                    result += `Chiều cao trung bình: ${avg.toFixed(2)}px\n`;
+                    result += `Chiều cao nhỏ nhất: ${min}px\n`;
+                    result += `Chiều cao lớn nhất: ${max}px\n`;
+                    
+                    showResults(result);
+                } else {
+                    showError('Không thể đọc các file SVG');
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Test với SVG string
+        function testSvgString() {
+            const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="97.478" height="100.017" viewBox="0 0 97.478 100.017">
+                <path d="M69.546,74.907H27.227l-9.311,25.11H0L38.935,0H58.543L97.478,100.017H79Zm-36.4-15.658h30.47L48.387,18.339Z"/>
+            </svg>`;
+            
+            const height = getSvgHeight.getSvgHeightFromString(svgString);
+            showResults(`Height từ SVG string: ${height}px`);
+        }
+
+        // Thêm button test với SVG string
+        const demoSection = document.querySelector('.demo-section');
+        const stringButton = document.createElement('button');
+        stringButton.textContent = 'Test với SVG String';
+        stringButton.onclick = testSvgString;
+        demoSection.appendChild(stringButton);
+    </script>
+</body>
+</html> 

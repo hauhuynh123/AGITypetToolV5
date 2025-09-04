@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGI Type Tool with AI Image Analysis</title>
+</head>
+<link id="main-style" rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="settings-popup.css">
+<link rel="stylesheet" href="ai-integration.css">
+<link rel="stylesheet" href="tweakpane-style.css">
+
+<body onload="setTheme()">
+  <!-- Tweakpane Style Control Panel -->
+  <div id="ai-panel" class="tp-pane">
+    <div class="tp-root">
+      <!-- Header -->
+      <div class="tp-folder tp-folder-expanded" id="ai-folder">
+        <div class="tp-folder-header">
+          <div class="tp-folder-title">AI Image Analysis</div>
+          <button class="tp-folder-toggle" id="ai-panel-toggle">−</button>
+        </div>
+        <div class="tp-folder-content">
+
+          <!-- Image Upload Section -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Image Input</div>
+            </div>
+            <div class="tp-section-content">
+              <div class="tp-upload-area" id="uploadArea">
+                <div class="tp-upload-text">Drop image here or click</div>
+              </div>
+              <input type="file" id="fileInput" accept="image/*" style="display: none;">
+              <img id="imagePreview" class="tp-image-preview" alt="Preview">
+            </div>
+          </div>
+
+          <!-- Analysis Controls -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Analysis</div>
+            </div>
+            <div class="tp-section-content">
+              <div class="tp-button-group">
+                <button class="tp-button tp-button-primary" id="processBtn">
+                  <div class="tp-button-title">Run Analysis</div>
+                </button>
+                <button class="tp-button tp-button-secondary" id="demoBtn">
+                  <div class="tp-button-title">Demo Mode</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading -->
+          <div class="tp-loading" id="loading">
+            <div class="tp-loading-spinner"></div>
+            <div class="tp-loading-text">Analyzing image...</div>
+          </div>
+
+          <!-- Results -->
+          <div class="tp-result" id="result">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Result</div>
+            </div>
+            <div class="tp-result-content">
+              <div class="tp-result-text" id="resultText"></div>
+              <button class="tp-button tp-button-small" id="resetBtn">
+                <div class="tp-button-title">Try Again</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Manual Input Section -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Manual Input</div>
+            </div>
+            <div class="tp-section-content">
+              <div class="tp-input-group">
+                <input type="text" id="manualTextInput" class="tp-text-input" placeholder="Enter text to type...">
+                <div class="tp-button-group">
+                  <button class="tp-button tp-button-primary" id="manualTypeBtn">
+                    <div class="tp-button-title">Type Text</div>
+                  </button>
+                  <button class="tp-button tp-button-danger" id="removeWordBtn">
+                    <div class="tp-button-title">Remove Word</div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Keyboard Toggle -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Keyboard Input</div>
+            </div>
+            <div class="tp-section-content">
+              <div class="tp-checkbox-container">
+                <label class="tp-checkbox-label">
+                  <input type="checkbox" id="keyboardInputToggle" class="tp-checkbox" checked>
+                  <span class="tp-checkbox-mark"></span>
+                  <span class="tp-checkbox-text">Enable Direct Keyboard Input</span>
+                </label>
+              </div>
+              <div class="tp-hint">
+                When enabled, you can type directly with your keyboard.
+              </div>
+            </div>
+          </div>
+
+          <!-- Advanced Settings Section -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Text Effects</div>
+            </div>
+            <div class="tp-section-content">
+
+              <div class="tp-control-item">
+                <label class="tp-checkbox-label">
+                  <input type="checkbox" id="switch-css" class="tp-checkbox">
+                  <span class="tp-checkbox-mark"></span>
+                  <span class="tp-checkbox-text">Text Direction</span>
+                </label>
+                <div class="tp-hint">Switch between different text layouts and styles</div>
+              </div>
+
+              <div class="tp-control-item">
+                <label class="tp-checkbox-label">
+                  <input type="checkbox" id="toggle-hover" class="tp-checkbox" checked>
+                  <span class="tp-checkbox-mark"></span>
+                  <span class="tp-checkbox-text">Hover Effects</span>
+                </label>
+                <div class="tp-hint">Enable word expansion on hover</div>
+              </div>
+
+              <div class="tp-control-item">
+                <label class="tp-checkbox-label">
+                  <input type="checkbox" id="toggle-animation" class="tp-checkbox">
+                  <span class="tp-checkbox-mark"></span>
+                  <span class="tp-checkbox-text">Sequential Animation</span>
+                </label>
+                <div class="tp-hint">Enable sequential word highlighting animation</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Audio & Visual Section -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Audio & Visual</div>
+            </div>
+            <div class="tp-section-content">
+
+              <div class="tp-control-item">
+                <label class="tp-checkbox-label">
+                  <input type="checkbox" id="toggle-noise" class="tp-checkbox">
+                  <span class="tp-checkbox-mark"></span>
+                  <span class="tp-checkbox-text">Random Noise</span>
+                </label>
+                <div class="tp-hint">Add dynamic visual noise effects to the background</div>
+              </div>
+
+              <div class="tp-control-item">
+                <label class="tp-checkbox-label">
+                  <input type="checkbox" id="toggle-audio" class="tp-checkbox">
+                  <span class="tp-checkbox-mark"></span>
+                  <span class="tp-checkbox-text">Input Sound</span>
+                </label>
+                <div class="tp-hint">Enable audio feedback and sound effects for typing</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Canvas Settings Section -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Canvas Settings</div>
+            </div>
+            <div class="tp-section-content">
+
+              <div class="tp-control-item">
+                <div class="tp-label">Background Color</div>
+                <select id="background-color-select" class="tp-select">
+                  <option value="#FF0000">Red</option>
+                  <option value="#0000FF">Blue</option>
+                  <option value="#FFFF00">Yellow</option>
+                </select>
+              </div>
+
+              <div class="tp-control-item">
+                <div class="tp-label">Canvas Size</div>
+                <div class="tp-input-group">
+                  <div class="tp-number-input-group">
+                    <label class="tp-number-label">Width:</label>
+                    <input type="number" id="canvas-width" class="tp-number-input" min="200" max="4000" value="1200"
+                      step="50">
+                  </div>
+                  <div class="tp-number-input-group">
+                    <label class="tp-number-label">Height:</label>
+                    <input type="number" id="canvas-height" class="tp-number-input" min="200" max="4000" value="800"
+                      step="50">
+                  </div>
+                </div>
+                <div class="tp-button-group">
+                  <button id="apply-canvas-size" class="tp-button tp-button-primary">
+                    <div class="tp-button-title">Apply Size</div>
+                  </button>
+                  <button id="fullscreen-canvas-btn" class="tp-button tp-button-secondary">
+                    <div class="tp-button-title">Fullscreen</div>
+                  </button>
+                </div>
+              </div>
+
+              <div class="tp-control-item">
+                <div class="tp-label">Background Image</div>
+                <input type="file" id="background-image-input" accept="image/*" style="display: none;">
+                <div class="tp-button-group">
+                  <button id="upload-image-btn" class="tp-button tp-button-secondary">
+                    <div class="tp-button-title">Upload Image</div>
+                  </button>
+                  <button id="remove-image-btn" class="tp-button tp-button-danger" style="display: none;">
+                    <div class="tp-button-title">Remove Image</div>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Vietnamese Input Section -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Vietnamese Input</div>
+            </div>
+            <div class="tp-section-content" id="vietnamese-controls-container">
+              <!-- Vietnamese controls will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Export Options Section -->
+          <div class="tp-section">
+            <div class="tp-section-header">
+              <div class="tp-section-title">Export Options</div>
+            </div>
+            <div class="tp-section-content">
+              <div class="tp-button-group">
+                <button id="export-svg-btn" class="tp-button tp-button-primary">
+                  <div class="tp-button-title">Export SVG</div>
+                </button>
+                <button id="export-png-btn" class="tp-button tp-button-primary">
+                  <div class="tp-button-title">Export PNG</div>
+                </button>
+                <button id="debug-layout-btn" class="tp-button tp-button-secondary">
+                  <div class="tp-button-title">Debug Layout</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="wrapper"></div>
+</body>
+<script src="svgLength.js"></script>
+<script src="scripts copy.js"></script>
+<script src="randomNoise.js"></script>
+<script src="sequentialAnimation.js"></script>
+<script src="audioFlex.js"></script>
+<script src="vietnamese-input.js"></script>
+<script src="svgExport.js"></script>
+<script src="ai-integration.js"></script>
+<script>
+  // Settings are now integrated into AI Panel
+  function initializeSettingsPopup() {
+    // Settings are integrated into the main AI panel
+    // No separate popup management needed
+  }
+
+  // Original functionality
+  document.getElementById('switch-css').addEventListener('change', function () {
+    var styleLink = document.getElementById('main-style');
+    var current = styleLink.getAttribute('href');
+    styleLink.setAttribute('href', current === 'style.css' ? 'style2.css' : 'style.css');
+  });
+
+  document.getElementById('toggle-noise').addEventListener('change', function (e) {
+    window.toggleRandomNoise(e.target.checked);
+  });
+
+  document.getElementById('toggle-audio').addEventListener('change', function (e) {
+    window.toggleAudioFlex(e.target.checked);
+  });
+
+  document.getElementById('toggle-hover').addEventListener('change', function (e) {
+    toggleHoverEffects(e.target.checked);
+    console.log('Hover toggle changed:', e.target.checked);
+  });
+
+  document.getElementById('toggle-animation').addEventListener('change', function (e) {
+    window.toggleSequentialAnimation(e.target.checked);
+  });
+
+  // Export button event listeners
+  document.getElementById('export-svg-btn').addEventListener('click', function () {
+    window.exportSVG();
+  });
+
+  document.getElementById('export-png-btn').addEventListener('click', function () {
+    window.exportPNG();
+  });
+
+  // Debug layout button listener
+  document.getElementById('debug-layout-btn').addEventListener('click', function () {
+    window.debugLayout();
+  });
+
+  // Background color change listener
+  document.getElementById('background-color-select').addEventListener('change', function (e) {
+    document.body.style.backgroundColor = e.target.value;
+  });
+
+  // Canvas size control listeners
+  document.getElementById('apply-canvas-size').addEventListener('click', function () {
+    const width = document.getElementById('canvas-width').value;
+    const height = document.getElementById('canvas-height').value;
+    applyCanvasSize(width, height);
+  });
+
+  // Fullscreen canvas button
+  document.getElementById('fullscreen-canvas-btn').addEventListener('click', function () {
+    applyFullscreenCanvas();
+  });
+
+  // Background image controls
+  document.getElementById('upload-image-btn').addEventListener('click', function () {
+    document.getElementById('background-image-input').click();
+  });
+
+  document.getElementById('background-image-input').addEventListener('change', function (e) {
+    if (e.target.files && e.target.files[0]) {
+      loadBackgroundImage(e.target.files[0]);
+    }
+  });
+
+  document.getElementById('remove-image-btn').addEventListener('click', function () {
+    removeBackgroundImage();
+  });
+
+  // Function to toggle hover effects
+  function toggleHoverEffects(enabled) {
+    const body = document.body;
+    if (enabled) {
+      body.classList.remove('no-hover');
+      console.log('Hover effects ENABLED - removed no-hover class');
+    } else {
+      body.classList.add('no-hover');
+      console.log('Hover effects DISABLED - added no-hover class');
+    }
+    console.log('Body classes:', body.className);
+  }
+
+  // Function to apply canvas size
+  function applyCanvasSize(width, height) {
+    const wrapper = document.getElementById('wrapper');
+    wrapper.style.width = width + 'px';
+    wrapper.style.height = height + 'px';
+
+    // Store canvas size globally for export
+    window.canvasWidth = parseInt(width);
+    window.canvasHeight = parseInt(height);
+
+    console.log('Canvas size applied:', width + 'x' + height);
+  }
+
+  // Function to apply fullscreen canvas
+  function applyFullscreenCanvas() {
+    const wrapper = document.getElementById('wrapper');
+    const fullWidth = window.innerWidth - 32; // Account for padding
+    const fullHeight = window.innerHeight - 32;
+
+    wrapper.style.width = fullWidth + 'px';
+    wrapper.style.height = fullHeight + 'px';
+
+    // Update input fields
+    document.getElementById('canvas-width').value = fullWidth;
+    document.getElementById('canvas-height').value = fullHeight;
+
+    // Store canvas size globally for export
+    window.canvasWidth = fullWidth;
+    window.canvasHeight = fullHeight;
+
+    console.log('Fullscreen canvas applied:', fullWidth + 'x' + fullHeight);
+  }
+
+  // Function to load background image
+  function loadBackgroundImage(file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const imageUrl = e.target.result;
+
+      // Set background image
+      document.body.style.backgroundImage = `url('${imageUrl}')`;
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundRepeat = 'no-repeat';
+
+      // Store image data for export
+      window.backgroundImageData = imageUrl;
+
+      // Show remove button
+      document.getElementById('remove-image-btn').style.display = 'inline-block';
+      document.getElementById('upload-image-btn').textContent = 'Change Image';
+
+      console.log('Background image loaded:', file.name);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Function to remove background image
+  function removeBackgroundImage() {
+    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundSize = 'auto';
+    document.body.style.backgroundPosition = 'auto';
+    document.body.style.backgroundRepeat = 'auto';
+
+    // Clear stored image data
+    window.backgroundImageData = null;
+
+    // Hide remove button
+    document.getElementById('remove-image-btn').style.display = 'none';
+    document.getElementById('upload-image-btn').textContent = 'Upload Image';
+
+    console.log('Background image removed');
+  }
+
+  // Function to initialize settings
+  function initializeSettings() {
+    // Set default background color to red
+    const bgSelect = document.getElementById('background-color-select');
+    bgSelect.value = '#FF0000';
+    document.body.style.backgroundColor = '#FF0000';
+
+    // Set default canvas size
+    window.canvasWidth = 1200;
+    window.canvasHeight = 800;
+    applyCanvasSize(window.canvasWidth, window.canvasHeight);
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', function () {
+    initializeSettingsPopup();
+    initializeSettings();
+
+    // Wait a bit for all elements to be ready
+    setTimeout(() => {
+      const hoverCheckbox = document.getElementById('toggle-hover');
+      if (hoverCheckbox) {
+        // Initialize hover effects as enabled by default
+        toggleHoverEffects(hoverCheckbox.checked);
+        console.log('Hover checkbox initialized:', hoverCheckbox.checked);
+      } else {
+        console.error('toggle-hover checkbox not found!');
+      }
+    }, 100);
+  });
+</script>
+
+</html>

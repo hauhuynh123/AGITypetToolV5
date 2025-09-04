@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Index Debug Test</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tweakpane-style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 99999;
+        }
+
+        .layer-test {
+            position: fixed;
+            width: 200px;
+            height: 100px;
+            background: rgba(255, 0, 0, 0.5);
+            border: 2px solid red;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .layer-1 {
+            z-index: 1000;
+            background: rgba(255, 0, 0, 0.7);
+        }
+
+        .layer-2 {
+            z-index: 2000;
+            background: rgba(0, 255, 0, 0.7);
+            top: 120px;
+        }
+
+        .layer-3 {
+            z-index: 9998;
+            background: rgba(0, 0, 255, 0.7);
+            top: 140px;
+        }
+
+        .layer-4 {
+            z-index: 9999;
+            background: rgba(255, 255, 0, 0.7);
+            top: 160px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="debug-info">
+        <div>Z-Index Debug Tool</div>
+        <div id="click-info">Click elements to test</div>
+    </div>
+
+    <h1>Z-Index Layer Testing</h1>
+    <button onclick="toggleSettings()">Toggle Settings Panel</button>
+    <button onclick="showLayers()">Show Test Layers</button>
+    <button onclick="hideLayers()">Hide Test Layers</button>
+
+    <div class="layer-test layer-1" onclick="layerClicked(1)">Layer 1 (z:1000)</div>
+    <div class="layer-test layer-2" onclick="layerClicked(2)">Layer 2 (z:2000)</div>
+    <div class="layer-test layer-3" onclick="layerClicked(3)">Layer 3 (z:9998)</div>
+    <div class="layer-test layer-4" onclick="layerClicked(4)">Layer 4 (z:9999)</div>
+
+    <!-- Settings Panel -->
+    <div id="settings-popup" class="tp-pane tp-settings-pane" style="display:none;">
+        <div class="tp-root">
+            <div class="tp-folder tp-folder-expanded">
+                <div class="tp-folder-header">
+                    <div class="tp-folder-title">Settings</div>
+                    <button class="tp-folder-toggle" id="settings-close">✕</button>
+                </div>
+                <div class="tp-folder-content">
+                    <div class="tp-section">
+                        <div class="tp-section-header">
+                            <div class="tp-section-title">Test Section</div>
+                        </div>
+                        <div class="tp-section-content">
+                            <div class="tp-control-item">
+                                <label class="tp-checkbox-label">
+                                    <input type="checkbox" class="tp-checkbox" onclick="checkboxClicked()">
+                                    <span class="tp-checkbox-mark"></span>
+                                    <span class="tp-checkbox-text">Test Checkbox</span>
+                                </label>
+                                <div class="tp-hint">Click this checkbox to test interaction</div>
+                            </div>
+                            <div class="tp-button-group">
+                                <button class="tp-button tp-button-primary" onclick="buttonClicked('primary')">
+                                    <div class="tp-button-title">Primary Button</div>
+                                </button>
+                                <button class="tp-button tp-button-secondary" onclick="buttonClicked('secondary')">
+                                    <div class="tp-button-title">Secondary Button</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Backdrop -->
+    <div id="settings-backdrop" style="display:none;"></div>
+
+    <div id="wrapper" style="margin-top: 300px; padding: 20px; border: 1px solid #333;">
+        <p>Main content area</p>
+        <p>The settings panel should appear above everything when opened.</p>
+    </div>
+
+    <script>
+        function layerClicked(layer) {
+            document.getElementById('click-info').textContent = `Layer ${layer} clicked!`;
+            console.log(`Layer ${layer} clicked`);
+        }
+
+        function checkboxClicked() {
+            document.getElementById('click-info').textContent = 'Checkbox clicked!';
+            console.log('Checkbox clicked');
+        }
+
+        function buttonClicked(type) {
+            document.getElementById('click-info').textContent = `${type} button clicked!`;
+            console.log(`${type} button clicked`);
+        }
+
+        function showLayers() {
+            document.querySelectorAll('.layer-test').forEach(layer => {
+                layer.style.display = 'flex';
+            });
+        }
+
+        function hideLayers() {
+            document.querySelectorAll('.layer-test').forEach(layer => {
+                layer.style.display = 'none';
+            });
+        }
+
+        function toggleSettings() {
+            const settings = document.getElementById('settings-popup');
+            const backdrop = document.getElementById('settings-backdrop');
+
+            if (!settings.classList.contains('show')) {
+                // Show settings
+                settings.style.display = 'block';
+                backdrop.style.display = 'block';
+                requestAnimationFrame(() => {
+                    settings.classList.add('show');
+                    backdrop.classList.add('show');
+                });
+                console.log('Settings opened');
+            } else {
+                // Hide settings
+                settings.classList.remove('show');
+                backdrop.classList.remove('show');
+                setTimeout(() => {
+                    if (!settings.classList.contains('show')) {
+                        settings.style.display = 'none';
+                        backdrop.style.display = 'none';
+                    }
+                }, 300);
+                console.log('Settings closed');
+            }
+        }
+
+        // Settings close handler
+        document.getElementById('settings-close').addEventListener('click', toggleSettings);
+        document.getElementById('settings-backdrop').addEventListener('click', toggleSettings);
+
+        // ESC key handler
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && document.getElementById('settings-popup').classList.contains('show')) {
+                toggleSettings();
+            }
+        });
+
+        console.log('Z-Index Debug Tool Loaded');
+        console.log('Expected z-index order: Layer 4 (9999) > Layer 3 (9998) > Layer 2 (2000) > Layer 1 (1000)');
+    </script>
+</body>
+
+</html>
