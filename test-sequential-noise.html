@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sequential Noise vs Random Noise</title>
+    <link rel="stylesheet" href="tweakpane-style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .test-instructions {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+
+        .comparison-item h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+
+        .comparison-item.old h4 {
+            color: #ff9800;
+        }
+
+        .comparison-item.new h4 {
+            color: #4CAF50;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #45a049;
+        }
+
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .btn.old {
+            background: #ff9800;
+        }
+
+        .btn.old:hover {
+            background: #f57c00;
+        }
+
+        .btn.new {
+            background: #4CAF50;
+        }
+
+        .btn.new:hover {
+            background: #45a049;
+        }
+
+        .btn.danger {
+            background: #f44336;
+        }
+
+        .btn.danger:hover {
+            background: #da190b;
+        }
+
+        .typing-area {
+            min-height: 200px;
+            border: 2px dashed #555;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .word {
+            display: flex;
+            margin: 5px 0;
+            align-items: center;
+        }
+
+        .letter {
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            margin: 0 3px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .status {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .status.active {
+            background: #1a3a1a;
+            color: #4CAF50;
+        }
+
+        .status.inactive {
+            background: #3a2a1a;
+            color: #ff9800;
+        }
+
+        .info-panel {
+            background: #1a3a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .info-panel h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+
+        .info-panel ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .info-panel li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Test Sequential Noise vs Random Noise</h1>
+
+        <div class="test-section">
+            <div class="test-title">🔄 Animation Logic Comparison</div>
+            <div class="test-instructions">
+                <strong>Instructions:</strong><br>
+                1. Add some text to the typing area below<br>
+                2. Test both "Old Random Noise" and "New Sequential Noise"<br>
+                3. Compare the different animation behaviors<br>
+                4. Notice how Sequential Noise follows the same pattern as Sequential Animation
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-item old">
+                    <h4>Old Random Noise</h4>
+                    <ul>
+                        <li>Highlights random words</li>
+                        <li>No predictable pattern</li>
+                        <li>Flex multiplier: 20x</li>
+                        <li>Interval: 1 second</li>
+                        <li>Unpredictable behavior</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-item new">
+                    <h4>New Sequential Noise</h4>
+                    <ul>
+                        <li>Highlights words in order (1, 2, 3...)</li>
+                        <li>Predictable sequential pattern</li>
+                        <li>Flex multiplier: 20x</li>
+                        <li>Interval: 1 second</li>
+                        <li>Same logic as Sequential Animation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎮 Animation Controls</div>
+            <div class="controls">
+                <button class="btn" onclick="addDemoText()">Add Demo Text</button>
+                <button class="btn" onclick="addRandomWords()">Add Random Words</button>
+                <button class="btn" onclick="clearAll()">Clear All</button>
+                <button class="btn old" onclick="testOldRandomNoise()">Test Old Random Noise</button>
+                <button class="btn new" onclick="testNewSequentialNoise()">Test New Sequential Noise</button>
+                <button class="btn danger" onclick="stopAllAnimations()">Stop All Animations</button>
+            </div>
+
+            <div class="status inactive" id="animation-status">
+                <strong>Animation Status:</strong> <span id="status-text">Inactive</span><br>
+                <strong>Current Mode:</strong> <span id="mode-text">None</span><br>
+                <strong>Word Count:</strong> <span id="word-count">0</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">⌨️ Typing Area</div>
+            <div class="typing-area" id="typing-area">
+                <div class="word" id="current-word"></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📊 Technical Details</div>
+            <div class="info-panel">
+                <h4>Sequential Noise Implementation:</h4>
+                <ul>
+                    <li><strong>Logic:</strong> Same as Sequential Animation but with 20x flex multiplier</li>
+                    <li><strong>Pattern:</strong> Word 1 → Word 2 → Word 3 → ... → Word N → Word 1 (loop)</li>
+                    <li><strong>Timing:</strong> 1 second interval between words</li>
+                    <li><strong>Reset:</strong> All words reset to normal size before highlighting next</li>
+                    <li><strong>Transition:</strong> Smooth 0.2s cubic-bezier animation</li>
+                    <li><strong>Loop:</strong> Automatically restarts from first word when reaching end</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentWord = document.getElementById('current-word');
+        let wordCount = 0;
+        let currentAnimation = null;
+        let animationActive = false;
+        let animationInterval = null;
+        let currentAnimationIndex = 0;
+
+        // Create word container
+        function createWordContainer() {
+            const word = document.createElement('div');
+            word.className = 'word';
+            document.getElementById('typing-area').appendChild(word);
+            return word;
+        }
+
+        // Add demo text
+        function addDemoText() {
+            const words = ['Hello', 'World', 'This', 'is', 'a', 'test', 'of', 'sequential', 'noise', 'animation'];
+            words.forEach((word, index) => {
+                setTimeout(() => {
+                    addWord(word);
+                }, index * 100);
+            });
+        }
+
+        // Add random words
+        function addRandomWords() {
+            const randomWords = ['Type', 'Some', 'Text', 'Here', 'And', 'Test', 'The', 'Animation'];
+            const randomWord = randomWords[Math.floor(Math.random() * randomWords.length)];
+            addWord(randomWord);
+        }
+
+        // Add a word to the typing area
+        function addWord(text) {
+            const word = document.createElement('div');
+            word.className = 'word';
+
+            for (let i = 0; i < text.length; i++) {
+                const letter = document.createElement('div');
+                letter.className = 'letter';
+                letter.textContent = text[i];
+                word.appendChild(letter);
+            }
+
+            document.getElementById('typing-area').appendChild(word);
+            wordCount++;
+            updateStatus();
+        }
+
+        // Clear all content
+        function clearAll() {
+            document.getElementById('typing-area').innerHTML = '<div class="word" id="current-word"></div>';
+            currentWord = document.getElementById('current-word');
+            wordCount = 0;
+            stopAllAnimations();
+            updateStatus();
+        }
+
+        // Update status display
+        function updateStatus() {
+            const statusElement = document.getElementById('animation-status');
+            const statusText = document.getElementById('status-text');
+            const modeText = document.getElementById('mode-text');
+            const wordCountText = document.getElementById('word-count');
+
+            if (animationActive) {
+                statusElement.className = 'status active';
+                statusText.textContent = 'Active';
+                modeText.textContent = currentAnimation || 'Unknown';
+            } else {
+                statusElement.className = 'status inactive';
+                statusText.textContent = 'Inactive';
+                modeText.textContent = 'None';
+            }
+
+            wordCountText.textContent = wordCount;
+        }
+
+        // Old Random Noise (original logic)
+        function highlightRandomWord() {
+            const words = document.querySelectorAll('.word');
+            if (words.length === 0) return;
+
+            // Reset all words to normal
+            words.forEach(word => {
+                word.style.transition = 'flex-grow 0.2s cubic-bezier(0.9, 0, 0, 1)';
+                word.style.flex = '1';
+            });
+
+            // Choose random word
+            const randomIndex = Math.floor(Math.random() * words.length);
+            const randomWord = words[randomIndex];
+
+            // Highlight random word
+            randomWord.style.transition = 'flex-grow 0.2s cubic-bezier(0.9, 0, 0, 1)';
+            randomWord.style.flex = '20';
+
+            console.log(`Random noise: highlighting random word ${randomIndex + 1}/${words.length}`);
+        }
+
+        // New Sequential Noise (same logic as sequential animation)
+        function highlightSequentialNoiseWord() {
+            const words = document.querySelectorAll('.word');
+            if (words.length === 0) return;
+
+            // Reset all words to normal
+            words.forEach(word => {
+                word.style.transition = 'flex-grow 0.2s cubic-bezier(0.9, 0, 0, 1)';
+                word.style.flex = '1';
+            });
+
+            // Highlight current word by index
+            if (currentAnimationIndex < words.length) {
+                const currentWord = words[currentAnimationIndex];
+                currentWord.style.transition = 'flex-grow 0.2s cubic-bezier(0.9, 0, 0, 1)';
+                currentWord.style.flex = '20';
+
+                console.log(`Sequential noise: highlighting word ${currentAnimationIndex + 1}/${words.length}`);
+            }
+
+            // Move to next word
+            currentAnimationIndex++;
+
+            // Reset to beginning if reached end
+            if (currentAnimationIndex >= words.length) {
+                currentAnimationIndex = 0;
+            }
+        }
+
+        // Start old random noise
+        function startOldRandomNoise() {
+            if (animationActive) return;
+            animationActive = true;
+            currentAnimation = 'Old Random Noise';
+
+            // Highlight first random word immediately
+            highlightRandomWord();
+
+            // Then change to random word every 1 second
+            animationInterval = setInterval(highlightRandomWord, 1000);
+
+            updateStatus();
+        }
+
+        // Start new sequential noise
+        function startNewSequentialNoise() {
+            if (animationActive) return;
+            animationActive = true;
+            currentAnimation = 'New Sequential Noise';
+            currentAnimationIndex = 0;
+
+            // Highlight first word immediately
+            highlightSequentialNoiseWord();
+
+            // Then move to next word every 1 second
+            animationInterval = setInterval(highlightSequentialNoiseWord, 1000);
+
+            updateStatus();
+        }
+
+        // Stop all animations
+        function stopAllAnimations() {
+            animationActive = false;
+            currentAnimation = null;
+            currentAnimationIndex = 0;
+
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+
+            // Reset all words to normal
+            const words = document.querySelectorAll('.word');
+            words.forEach(word => {
+                word.style.transition = 'flex-grow 0.2s cubic-bezier(0.9, 0, 0, 1)';
+                word.style.flex = '1';
+            });
+
+            // Remove transitions after animation
+            setTimeout(() => {
+                words.forEach(word => {
+                    word.style.transition = '';
+                });
+            }, 200);
+
+            updateStatus();
+            console.log('All animations stopped');
+        }
+
+        // Test functions
+        function testOldRandomNoise() {
+            stopAllAnimations();
+            setTimeout(() => startOldRandomNoise(), 100);
+        }
+
+        function testNewSequentialNoise() {
+            stopAllAnimations();
+            setTimeout(() => startNewSequentialNoise(), 100);
+        }
+
+        // Handle keyboard input
+        document.addEventListener('keydown', function (event) {
+            // Handle regular typing (add letters to current word)
+            if (event.keyCode >= 65 && event.keyCode <= 90) { // A-Z
+                const letter = document.createElement('div');
+                letter.className = 'letter';
+                letter.textContent = String.fromCharCode(event.keyCode);
+                currentWord.appendChild(letter);
+                event.preventDefault();
+            }
+
+            // Handle space (create new word)
+            if (event.keyCode === 32) {
+                const newWord = document.createElement('div');
+                newWord.className = 'word';
+                document.getElementById('typing-area').appendChild(newWord);
+                currentWord = newWord;
+                wordCount++;
+                updateStatus();
+                event.preventDefault();
+            }
+        });
+
+        // Initialize
+        updateStatus();
+        console.log('Sequential Noise Test initialized');
+        console.log('Add some text and test both animation modes!');
+    </script>
+</body>
+
+</html>

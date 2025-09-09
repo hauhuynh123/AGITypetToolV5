@@ -16,7 +16,7 @@ class SVGExporter {
       const parser = new DOMParser();
       const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
       const svgElement = svgDoc.querySelector('svg');
-      
+
       if (svgElement) {
         const svgData = {
           width: parseFloat(svgElement.getAttribute('width')),
@@ -50,14 +50,14 @@ class SVGExporter {
         height: wordRect.height,
         characters: []
       };
-      
+
       for (const char of characters) {
         const charRect = char.getBoundingClientRect();
-        
+
         // Get SVG path from background image
         const bgImage = char.style.backgroundImage;
         const svgPath = bgImage ? bgImage.replace(/url\(['"]?(.+?)['"]?\)/, '$1') : '';
-        
+
         wordData.characters.push({
           x: charRect.left - wrapperRect.left,
           y: charRect.top - wrapperRect.top,
@@ -67,10 +67,10 @@ class SVGExporter {
           element: char
         });
       }
-      
+
       layout.push(wordData);
     }
-    
+
     return layout;
   }
 
@@ -79,10 +79,10 @@ class SVGExporter {
     const layout = this.calculateActualLayout();
     const computedStyle = getComputedStyle(document.body);
     const backgroundColor = computedStyle.backgroundColor;
-    
+
     // Always use canvas dimensions if available, otherwise calculate based on wrapper
     let totalWidth, totalHeight;
-    
+
     if (window.canvasWidth && window.canvasHeight) {
       totalWidth = window.canvasWidth;
       totalHeight = window.canvasHeight;
@@ -93,27 +93,27 @@ class SVGExporter {
       const wrapperRect = wrapper.getBoundingClientRect();
       totalWidth = wrapperRect.width;
       totalHeight = wrapperRect.height;
-      
+
       // If wrapper is very small, use content-based calculation
       if (totalWidth < 200 || totalHeight < 100) {
         let maxWidth = 0;
         let maxHeight = 0;
-        
+
         for (const word of layout) {
           const wordWidth = word.characters.reduce((sum, char) => sum + char.width, 0);
           maxWidth = Math.max(maxWidth, wordWidth);
           maxHeight = Math.max(maxHeight, word.y + 100);
         }
-        
+
         // Add padding
         const padding = 50;
         totalWidth = Math.max(totalWidth, maxWidth + (padding * 2));
         totalHeight = Math.max(totalHeight, maxHeight + (padding * 2));
       }
     }
-    
+
     console.log('SVG final dimensions:', totalWidth, 'x', totalHeight);
-    
+
     // Handle background image if present
     let backgroundElement = '';
     if (window.backgroundImageData) {
@@ -126,7 +126,7 @@ class SVGExporter {
     } else {
       backgroundElement = `<rect width="100%" height="100%" fill="${backgroundColor}"/>`;
     }
-    
+
     // Start building SVG
     let svgContent = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}" viewBox="0 0 ${totalWidth} ${totalHeight}">
@@ -137,7 +137,7 @@ class SVGExporter {
     // Process each word
     for (const word of layout) {
       svgContent += `\n    <!-- Word at x=${word.x}, y=${word.y} -->`;
-      
+
       for (const char of word.characters) {
         if (char.svgPath) {
           try {
@@ -145,14 +145,14 @@ class SVGExporter {
             if (svgData && svgData.paths.length > 0) {
               // Apply current foreground color filter
               const foregroundColor = this.getForegroundColor();
-              
+
               svgContent += `\n    <g transform="translate(${char.x}, ${char.y})">`;
-              svgContent += `\n      <g transform="scale(${char.width/svgData.width}, ${char.height/svgData.height})">`;
-              
+              svgContent += `\n      <g transform="scale(${char.width / svgData.width}, ${char.height / svgData.height})">`;
+
               for (const pathData of svgData.paths) {
                 svgContent += `\n        <path d="${pathData}" fill="${foregroundColor}"/>`;
               }
-              
+
               svgContent += `\n      </g>`;
               svgContent += `\n    </g>`;
             }
@@ -162,7 +162,7 @@ class SVGExporter {
         }
       }
     }
-    
+
     svgContent += `\n  </g>\n</svg>`;
     return svgContent;
   }
@@ -170,20 +170,20 @@ class SVGExporter {
   // Get current foreground color
   getForegroundColor() {
     const foreground = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim();
-    
+
     console.log('Raw foreground value:', foreground);
-    
+
     // Check if it's a CSS filter or a direct color
     if (foreground.includes('invert') || foreground.includes('filter')) {
       // For complex filters, we need to determine the actual color
       // Check background color to determine contrasting foreground
       const backgroundColor = getComputedStyle(document.body).backgroundColor;
       console.log('Background color for contrast:', backgroundColor);
-      
+
       // Simple contrast logic based on background
-      if (backgroundColor.includes('rgb(255, 0, 0)') || backgroundColor === '#FF0000' || 
-          backgroundColor.includes('rgb(255, 255, 0)') || backgroundColor === '#FFFF00' ||
-          backgroundColor.includes('rgb(0, 0, 255)') || backgroundColor === '#00FF00') {
+      if (backgroundColor.includes('rgb(255, 0, 0)') || backgroundColor === '#FF0000' ||
+        backgroundColor.includes('rgb(255, 255, 0)') || backgroundColor === '#FFFF00' ||
+        backgroundColor.includes('rgb(0, 0, 255)') || backgroundColor === '#00FF00') {
         return '#000000'; // Black text on red/yellow/green background
       } else if (backgroundColor.includes('rgb(0, 0, 255)') || backgroundColor === '#0000FF') {
         return '#000000'; // White text on blue background
@@ -191,7 +191,7 @@ class SVGExporter {
         return '#000000'; // Default to black
       }
     }
-    
+
     // If it's a direct color value, use it
     const color = foreground || '#000000';
     console.log('Using foreground color:', color);
@@ -202,21 +202,21 @@ class SVGExporter {
   async exportSVG() {
     try {
       const svgContent = await this.generateSVG();
-      
+
       // Create blob and download
       const blob = new Blob([svgContent], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
-      
+
       const link = document.createElement('a');
       link.href = url;
       link.download = `agi-type-export-${Date.now()}.svg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       // Clean up
       URL.revokeObjectURL(url);
-      
+
       console.log('SVG exported successfully');
       return true;
     } catch (error) {
@@ -232,10 +232,10 @@ class SVGExporter {
       const wrapper = document.getElementById('wrapper');
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      
+
       // Get wrapper dimensions and position
       const wrapperRect = wrapper.getBoundingClientRect();
-      
+
       // Always use canvas dimensions if available, otherwise use wrapper size
       let canvasWidth, canvasHeight;
       if (window.canvasWidth && window.canvasHeight) {
@@ -247,15 +247,15 @@ class SVGExporter {
         canvasHeight = wrapperRect.height;
         console.log('Using wrapper dimensions:', canvasWidth, 'x', canvasHeight);
       }
-      
+
       // Set canvas size with scale factor for higher quality
       const scale = 2;
       canvas.width = canvasWidth * scale;
       canvas.height = canvasHeight * scale;
       ctx.scale(scale, scale);
-      
+
       console.log('PNG final canvas dimensions:', canvasWidth, 'x', canvasHeight, '(scaled:', canvas.width, 'x', canvas.height, ')');
-      
+
       // Fill background and draw characters
       if (window.backgroundImageData) {
         // Draw background image first, then characters
@@ -279,12 +279,12 @@ class SVGExporter {
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         drawCharactersAndExport();
       }
-      
+
       // Function to draw characters and export
       const drawCharactersAndExport = async () => {
         // Get actual layout
         const layout = this.calculateActualLayout();
-        
+
         // Draw each character sequentially to avoid async issues
         for (const word of layout) {
           for (const char of word.characters) {
@@ -294,7 +294,7 @@ class SVGExporter {
                 if (svgData && svgData.paths.length > 0) {
                   // Create a temporary SVG for this character
                   const tempSVG = this.createCharacterSVG(svgData, char.width, char.height);
-                  
+
                   // Convert to image and draw (wait for each one to complete)
                   await this.drawSVGToCanvas(ctx, tempSVG, char.x, char.y, char.width, char.height);
                   console.log('Drew character:', char.svgPath.split('/').pop());
@@ -306,9 +306,9 @@ class SVGExporter {
             }
           }
         }
-        
+
         console.log('Finished drawing all characters');
-        
+
         // Convert to PNG and download
         canvas.toBlob((blob) => {
           const url = URL.createObjectURL(blob);
@@ -318,10 +318,10 @@ class SVGExporter {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          
+
           // Clean up
           URL.revokeObjectURL(url);
-          
+
           console.log('PNG exported successfully');
           resolve(true);
         }, 'image/png');
@@ -337,11 +337,11 @@ class SVGExporter {
   createCharacterSVG(svgData, width, height) {
     const foregroundColor = this.getForegroundColor();
     let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${svgData.width} ${svgData.height}">`;
-    
+
     for (const pathData of svgData.paths) {
       svgContent += `<path d="${pathData}" fill="${foregroundColor}"/>`;
     }
-    
+
     svgContent += '</svg>';
     return svgContent;
   }
@@ -352,14 +352,14 @@ class SVGExporter {
       const img = new Image();
       const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(svgBlob);
-      
+
       // Add timeout to prevent hanging
       const timeout = setTimeout(() => {
         console.warn('Timeout drawing SVG at', x, y);
         URL.revokeObjectURL(url);
         resolve();
       }, 5000); // 5 second timeout
-      
+
       img.onload = () => {
         clearTimeout(timeout);
         try {
@@ -370,14 +370,14 @@ class SVGExporter {
         URL.revokeObjectURL(url);
         resolve();
       };
-      
+
       img.onerror = (error) => {
         clearTimeout(timeout);
         console.warn('Error loading SVG image:', error);
         URL.revokeObjectURL(url);
         resolve(); // Continue even if one character fails
       };
-      
+
       img.src = url;
     });
   }
@@ -387,20 +387,20 @@ class SVGExporter {
 window.svgExporter = new SVGExporter();
 
 // Global export functions
-window.exportSVG = function() {
+window.exportSVG = function () {
   return window.svgExporter.exportSVG();
 };
 
-window.exportPNG = function() {
+window.exportPNG = function () {
   return window.svgExporter.exportPNG();
 };
 
 // Debug function to visualize layout
-window.debugLayout = function() {
+window.debugLayout = function () {
   const layout = window.svgExporter.calculateActualLayout();
   const wrapper = document.getElementById('wrapper');
   const wrapperRect = wrapper.getBoundingClientRect();
-  
+
   console.log('Current layout:', layout);
   console.log('Wrapper dimensions:', {
     width: wrapperRect.width,
@@ -408,11 +408,11 @@ window.debugLayout = function() {
     canvasWidth: window.canvasWidth,
     canvasHeight: window.canvasHeight
   });
-  
+
   // Temporarily add debug overlays
   const existingOverlays = wrapper.querySelectorAll('.debug-overlay');
   existingOverlays.forEach(overlay => overlay.remove());
-  
+
   layout.forEach((word, wordIndex) => {
     word.characters.forEach((char, charIndex) => {
       const overlay = document.createElement('div');
@@ -430,7 +430,7 @@ window.debugLayout = function() {
       wrapper.appendChild(overlay);
     });
   });
-  
+
   // Remove overlays after 3 seconds
   setTimeout(() => {
     const overlays = wrapper.querySelectorAll('.debug-overlay');

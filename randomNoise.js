@@ -1,9 +1,9 @@
 // randomNoise.js
-// Cứ 3s chọn ngẫu nhiên 1 .word và nhân flex với 20
+// Cứ 1s highlight từng .word theo thứ tự và nhân flex với 20 (same logic as sequential animation)
 
 let noiseActive = false;
 let noiseInterval = null;
-let currentHighlightedWord = null;
+let currentNoiseIndex = 0;
 
 function resetAllWordsToOriginal() {
   const words = document.querySelectorAll('.word');
@@ -15,36 +15,46 @@ function resetAllWordsToOriginal() {
   });
 }
 
-function highlightRandomWord() {
+function highlightSequentialNoiseWord() {
   const words = document.querySelectorAll('.word');
   if (words.length === 0) return;
 
-  // Reset word trước đó về trạng thái bình thường với animation
-  if (currentHighlightedWord) {
-    const baseFlex = parseFloat(currentHighlightedWord.style.getPropertyValue('--word-flex')) || 1;
-    currentHighlightedWord.style.transition = 'flex-grow 0.2s cubic-bezier(1, 0, 0, 1)';
-    currentHighlightedWord.style.flex = baseFlex.toFixed(2);
+  // Reset tất cả words về trạng thái bình thường
+  words.forEach(word => {
+    const baseFlex = parseFloat(word.style.getPropertyValue('--word-flex')) || 1;
+    word.style.transition = 'flex-grow 0.2s cubic-bezier(0.9, 0, 0, 1)';
+    word.style.flex = baseFlex.toFixed(2);
+  });
+
+  // Highlight word hiện tại theo index
+  if (currentNoiseIndex < words.length) {
+    const currentWord = words[currentNoiseIndex];
+    const baseFlex = parseFloat(currentWord.style.getPropertyValue('--word-flex')) || 1;
+    currentWord.style.transition = 'flex-grow 0.2s cubic-bezier(0.9, 0, 0, 1)';
+    currentWord.style.flex = (baseFlex * 20).toFixed(2);
+
+    console.log(`Sequential noise: highlighting word ${currentNoiseIndex + 1}/${words.length}`);
   }
 
-  // Chọn ngẫu nhiên 1 word mới
-  const randomIndex = Math.floor(Math.random() * words.length);
-  currentHighlightedWord = words[randomIndex];
+  // Chuyển sang word tiếp theo
+  currentNoiseIndex++;
 
-  // Thêm animation cho word mới và nhân flex với 20
-  const baseFlex = parseFloat(currentHighlightedWord.style.getPropertyValue('--word-flex')) || 1;
-  currentHighlightedWord.style.transition = 'flex-grow 0.2s cubic-bezier(1, 0, 0, 1)';
-  currentHighlightedWord.style.flex = (baseFlex * 20).toFixed(2);
+  // Reset về đầu nếu đã hết words
+  if (currentNoiseIndex >= words.length) {
+    currentNoiseIndex = 0;
+  }
 }
 
 function startRandomNoise() {
   if (noiseActive) return;
   noiseActive = true;
+  currentNoiseIndex = 0;
 
   // Highlight word đầu tiên ngay lập tức
-  highlightRandomWord();
+  highlightSequentialNoiseWord();
 
-  // Sau đó cứ 3 giây đổi sang word khác
-  noiseInterval = setInterval(highlightRandomWord, 1000); // 3000ms = 3s
+  // Sau đó cứ 1 giây chuyển sang word tiếp theo
+  noiseInterval = setInterval(highlightSequentialNoiseWord, 1000); // 1000ms = 1s
 }
 
 function stopRandomNoise() {
@@ -54,8 +64,13 @@ function stopRandomNoise() {
     noiseInterval = null;
   }
 
-  // Reset tất cả words về trạng thái bình thường với animation
-  resetAllWordsToOriginal();
+  // Reset tất cả words về trạng thái bình thường
+  const words = document.querySelectorAll('.word');
+  words.forEach(word => {
+    const baseFlex = parseFloat(word.style.getPropertyValue('--word-flex')) || 1;
+    word.style.transition = 'flex-grow 0.2s cubic-bezier(0.9, 0, 0, 1)';
+    word.style.flex = baseFlex.toFixed(2);
+  });
 
   // Sau khi animation hoàn thành, xóa transition để không ảnh hưởng hover effect
   setTimeout(() => {
@@ -65,7 +80,8 @@ function stopRandomNoise() {
     });
   }, 200); // 200ms = thời gian transition
 
-  currentHighlightedWord = null;
+  currentNoiseIndex = 0;
+  console.log('Sequential noise animation stopped');
 }
 
 // Cho phép bật/tắt từ ngoài

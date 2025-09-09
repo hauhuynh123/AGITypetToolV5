@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Hidden Panel with Keyboard Shortcut</title>
+    <link rel="stylesheet" href="tweakpane-style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .test-instructions {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .shortcut-info {
+            background: #1a3a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .shortcut-info h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+
+        .shortcut-key {
+            background: #333;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-weight: bold;
+            margin: 0 2px;
+        }
+
+        .status {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .status.visible {
+            background: #1a3a1a;
+            color: #4CAF50;
+        }
+
+        .status.hidden {
+            background: #3a2a1a;
+            color: #ff9800;
+        }
+
+        .demo-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: var(--tp-background-color);
+            border: 1px solid var(--tp-border-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            font-family: var(--tp-font-family);
+            font-size: var(--tp-font-size);
+            z-index: 1000;
+            display: none;
+            /* Hidden by default */
+        }
+
+        .demo-folder {
+            border-bottom: 1px solid var(--tp-border-color);
+        }
+
+        .demo-folder-header {
+            display: none;
+            /* Header completely hidden */
+        }
+
+        .demo-folder-content {
+            padding: 16px;
+            display: block;
+        }
+
+        .demo-section {
+            margin-bottom: 20px;
+        }
+
+        .demo-section-title {
+            font-weight: 600;
+            color: var(--tp-text-color);
+            margin-bottom: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .demo-control {
+            margin-bottom: 10px;
+        }
+
+        .demo-label {
+            display: block;
+            color: var(--tp-text-color);
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 6px 8px;
+            background: var(--tp-input-background-color);
+            border: 1px solid var(--tp-input-border-color);
+            border-radius: 3px;
+            color: var(--tp-text-color);
+            font-size: 11px;
+        }
+
+        .demo-button {
+            background: var(--tp-button-background-color);
+            border: none;
+            border-radius: 3px;
+            color: var(--tp-text-color);
+            padding: 6px 12px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .demo-button:hover {
+            background: var(--tp-button-background-color-hover);
+        }
+
+        .demo-button.primary {
+            background: var(--tp-button-background-color-focus);
+        }
+
+        .demo-button.primary:hover {
+            background: var(--tp-button-background-color-active);
+        }
+
+        .typing-area {
+            min-height: 100px;
+            border: 2px dashed #555;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .word {
+            display: flex;
+            margin: 5px 0;
+            align-items: center;
+        }
+
+        .letter {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            margin: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Test Hidden Panel with Keyboard Shortcut</h1>
+
+        <div class="test-section">
+            <div class="test-title">🎯 Hidden Panel Demo</div>
+            <div class="test-instructions">
+                <strong>Instructions:</strong><br>
+                1. Notice that the settings panel is <strong>completely hidden</strong> by default<br>
+                2. Press <span class="shortcut-key">Ctrl + S</span> (Windows/Linux) or <span class="shortcut-key">Cmd +
+                    S</span> (Mac)<br>
+                3. Watch the panel appear from nowhere<br>
+                4. Press the shortcut again to hide it completely<br>
+                5. No header/button visible - only keyboard shortcut works
+            </div>
+
+            <div class="shortcut-info">
+                <h4>Hidden Panel Features:</h4>
+                <ul>
+                    <li><strong>Completely Hidden:</strong> No visible header or toggle button</li>
+                    <li><strong>Keyboard Only:</strong> Only accessible via <span class="shortcut-key">Ctrl + S</span> /
+                        <span class="shortcut-key">Cmd + S</span></li>
+                    <li><strong>Clean Interface:</strong> No UI clutter on screen</li>
+                    <li><strong>Instant Toggle:</strong> Show/hide with single keypress</li>
+                    <li><strong>No Header:</strong> Direct access to content</li>
+                </ul>
+            </div>
+
+            <div class="status hidden" id="panel-status">
+                <strong>Panel Status:</strong> <span id="status-text">Hidden</span><br>
+                <strong>Last Action:</strong> <span id="last-action">Panel is hidden by default</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">⌨️ Typing Area</div>
+            <div class="typing-area" id="typing-area">
+                <div class="word" id="current-word"></div>
+            </div>
+            <div class="test-instructions">
+                <strong>Test Typing:</strong> Type some text here to test that the hidden panel doesn't interfere with
+                normal typing. The panel only appears when you use the keyboard shortcut.
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎯 Test Scenarios</div>
+            <div class="test-instructions">
+                <strong>Try these scenarios:</strong><br>
+                1. <strong>Initial State:</strong> Panel should be completely hidden<br>
+                2. <strong>First Shortcut:</strong> Panel appears from nowhere<br>
+                3. <strong>Second Shortcut:</strong> Panel disappears completely<br>
+                4. <strong>Typing Test:</strong> Normal typing should work without interference<br>
+                5. <strong>Rapid Toggle:</strong> Press shortcut multiple times quickly<br>
+                6. <strong>Focus Test:</strong> Works when typing in input fields
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Demo Settings Panel -->
+    <div class="demo-panel" id="demo-panel">
+        <div class="demo-folder" id="demo-folder">
+            <div class="demo-folder-header">
+                <div class="demo-folder-title">AI Image Analysis & Settings</div>
+                <button class="demo-folder-toggle" id="demo-toggle">−</button>
+            </div>
+            <div class="demo-folder-content">
+                <div class="demo-section">
+                    <div class="demo-section-title">Image Input</div>
+                    <div class="demo-control">
+                        <label class="demo-label">Upload Image</label>
+                        <input type="file" class="demo-input" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="demo-section">
+                    <div class="demo-section-title">Analysis</div>
+                    <div class="demo-control">
+                        <button class="demo-button primary">Run Analysis</button>
+                        <button class="demo-button">Demo Mode</button>
+                    </div>
+                </div>
+
+                <div class="demo-section">
+                    <div class="demo-section-title">Manual Input</div>
+                    <div class="demo-control">
+                        <label class="demo-label">Type Text</label>
+                        <input type="text" class="demo-input" placeholder="Enter text here...">
+                    </div>
+                    <div class="demo-control">
+                        <button class="demo-button">Type Text</button>
+                        <button class="demo-button">Remove Word</button>
+                    </div>
+                </div>
+
+                <div class="demo-section">
+                    <div class="demo-section-title">Settings</div>
+                    <div class="demo-control">
+                        <label class="demo-label">Background Color</label>
+                        <select class="demo-input">
+                            <option>White</option>
+                            <option>Red</option>
+                            <option>Blue</option>
+                            <option>Yellow</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="demo-section">
+                    <div class="demo-section-title">Text Effects</div>
+                    <div class="demo-control">
+                        <label class="demo-label">
+                            <input type="checkbox" checked> Hover Effects
+                        </label>
+                    </div>
+                    <div class="demo-control">
+                        <label class="demo-label">
+                            <input type="checkbox"> Sequential Animation
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let actionCount = 0;
+        let currentWord = document.getElementById('current-word');
+
+        // Update status display
+        function updateStatus(isVisible, action) {
+            const statusElement = document.getElementById('panel-status');
+            const statusText = document.getElementById('status-text');
+            const lastAction = document.getElementById('last-action');
+
+            if (isVisible) {
+                statusElement.className = 'status visible';
+                statusText.textContent = 'Visible';
+            } else {
+                statusElement.className = 'status hidden';
+                statusText.textContent = 'Hidden';
+            }
+
+            actionCount++;
+            lastAction.textContent = `${action} (Action #${actionCount})`;
+        }
+
+        // Toggle panel function
+        function togglePanel() {
+            const panel = document.getElementById('demo-panel');
+            const isVisible = panel.style.display !== 'none';
+
+            if (isVisible) {
+                // Hide panel completely
+                panel.style.display = 'none';
+                updateStatus(false, 'Panel hidden');
+            } else {
+                // Show panel
+                panel.style.display = 'block';
+                updateStatus(true, 'Panel shown');
+            }
+        }
+
+        // Keyboard shortcut handler
+        document.addEventListener('keydown', function (event) {
+            // Check for Ctrl+S (Windows/Linux) or Cmd+S (Mac)
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault(); // Prevent browser save dialog
+                togglePanel();
+                console.log('Keyboard shortcut triggered: Ctrl/Cmd + S');
+            }
+        });
+
+        // Handle typing in the typing area
+        document.addEventListener('keydown', function (event) {
+            // Handle regular typing (add letters to current word)
+            if (event.keyCode >= 65 && event.keyCode <= 90) { // A-Z
+                const letter = document.createElement('div');
+                letter.className = 'letter';
+                letter.textContent = String.fromCharCode(event.keyCode);
+                currentWord.appendChild(letter);
+                event.preventDefault();
+            }
+
+            // Handle space (create new word)
+            if (event.keyCode === 32) {
+                const newWord = document.createElement('div');
+                newWord.className = 'word';
+                document.getElementById('typing-area').appendChild(newWord);
+                currentWord = newWord;
+                event.preventDefault();
+            }
+        });
+
+        // Initialize
+        updateStatus(false, 'Panel initialized as hidden');
+        console.log('Hidden Panel Test initialized');
+        console.log('Press Ctrl+S (Windows/Linux) or Cmd+S (Mac) to show/hide the panel!');
+    </script>
+</body>
+
+</html>

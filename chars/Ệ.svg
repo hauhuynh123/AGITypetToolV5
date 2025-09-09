@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="740" version="1.1" viewBox="0 0 600 740" preserveAspectRatio="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="507" height="718" version="1.1" viewBox="0 0 507 718" preserveAspectRatio="none">
   <!-- Generator: Adobe Illustrator 28.7.1, SVG Export Plug-In . SVG Version: 1.2.0 Build 142)  -->
   <g>
     <g id="Layer_1">
-      <path d="M230,639.657584v89.342416h162v-89.342416h-162ZM564,138.818347H57v468.2325159h507v-93.2552225H221v-99.7765668h286v-91.9509537H221v-89.9945504h343v-93.2552225ZM509,114.0372389L394,11h-166l-115,103.0372389h119l79-41.7366031,79,41.7366031h119Z"/>
+      <g id="Layer_1-2" data-name="Layer_1">
+        <path d="M173,628.6575928v89.3424072h162v-89.3424072h-162ZM507,127.8183441H0v468.2324982h507v-93.255249H164v-99.7765503h286v-91.9509583H164v-89.9945526h343v-93.2552338.0000458ZM452,103.0372391L337,0h-166L56,103.0372391h119l79-41.7366028,79,41.7366028h119Z"/>
+      </g>
     </g>
   </g>
 </svg>

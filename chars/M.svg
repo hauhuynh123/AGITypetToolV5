@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="868" height="740" version="1.1" viewBox="0 0 868 740" preserveAspectRatio="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="754" height="718" version="1.1" viewBox="0 0 754 718" preserveAspectRatio="none">
   <!-- Generator: Adobe Illustrator 28.7.1, SVG Export Plug-In . SVG Version: 1.2.0 Build 142)  -->
   <g>
     <g id="Layer_1">
-      <polygon points="374 729 494 729 652 232 652 729 811 729 811 11 582 11 436 482 290 11 57 11 57 729 216 729 216 232 374 729"/>
+      <g id="Layer_1-2" data-name="Layer_1">
+        <polygon points="317 718 437 718 595 221 595 718 754 718 754 0 525 0 379 471 233 0 0 0 0 718 159 718 159 221 317 718"/>
+      </g>
     </g>
   </g>
 </svg>

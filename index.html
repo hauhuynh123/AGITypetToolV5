@@ -16,10 +16,10 @@
   <!-- Tweakpane Style Control Panel -->
   <div id="ai-panel" class="tp-pane">
     <div class="tp-root">
-      <!-- Header -->
-      <div class="tp-folder tp-folder-expanded" id="ai-folder">
-        <div class="tp-folder-header">
-          <div class="tp-folder-title">AI Image Analysis</div>
+      <!-- Header (Hidden by default) -->
+      <div class="tp-folder tp-folder-expanded" id="ai-folder" style="display: none;">
+        <div class="tp-folder-header" style="display: none;">
+          <div class="tp-folder-title">AI Image Analysis & Settings</div>
           <button class="tp-folder-toggle" id="ai-panel-toggle">−</button>
         </div>
         <div class="tp-folder-content">
@@ -473,6 +473,31 @@
         console.error('toggle-hover checkbox not found!');
       }
     }, 100);
+  });
+
+  // Keyboard shortcut to toggle AI panel (Ctrl/Cmd + S)
+  document.addEventListener('keydown', function (event) {
+    // Check for Ctrl+S (Windows/Linux) or Cmd+S (Mac)
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.preventDefault(); // Prevent browser save dialog
+
+      const aiPanel = document.getElementById('ai-panel');
+      const aiFolder = document.getElementById('ai-folder');
+
+      if (aiPanel && aiFolder) {
+        const isVisible = aiFolder.style.display !== 'none';
+
+        if (isVisible) {
+          // Hide panel completely
+          aiFolder.style.display = 'none';
+          console.log('AI Panel hidden via keyboard shortcut');
+        } else {
+          // Show panel
+          aiFolder.style.display = 'block';
+          console.log('AI Panel shown via keyboard shortcut');
+        }
+      }
+    }
   });
 </script>
 

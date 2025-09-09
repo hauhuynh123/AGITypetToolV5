@@ -38,7 +38,8 @@ body {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: center;
-  margin: 0 var(--spacing);
+  margin: 0 1cap 0 1cap;
+  /* margin: 0 var(--spacing); */
   filter: var(--foreground);
   transition: flex-grow 0.2s cubic-bezier(1, 0, 0, 1);
 }
